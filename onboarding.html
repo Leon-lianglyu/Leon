@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Leon 团队新人学习大纲</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/markmap-view@0.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/markmap-lib@0.17"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #F8FAFC;
+    --surface:   #FFFFFF;
+    --border:    #E2E8F0;
+    --border-lt: #F1F5F9;
+    --text-1:    #0F172A;
+    --text-2:    #475569;
+    --text-3:    #94A3B8;
+    --blue:      #2563EB;
+    --blue-lt:   #EFF6FF;
+    --blue-dark: #1D4ED8;
+    --navy:      #1E3A5F;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.04);
+    --radius:    12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text-1);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #0F1F3D 0%, #1E3A5F 50%, #1D4ED8 100%);
+    color: white;
+    padding: 52px 48px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -80px; top: -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: 80px; bottom: -100px;
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 720px; }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .hero p {
+    font-size: 0.9375rem;
+    color: rgba(255,255,255,0.7);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+  .badge-row { display: flex; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    backdrop-filter: blur(8px);
+    color: rgba(255,255,255,0.88);
+  }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 14px 18px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .tab:hover { color: var(--blue); }
+  .tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+  /* ── Content area ── */
+  .content { max-width: 1000px; margin: 0 auto; padding: 36px 24px 80px; }
+
+  /* ── Section visibility ── */
+  .section { display: none; }
+  .section.active { display: block; }
+  #section-overview { display: block; }
+
+  /* ── Overview grid ── */
+  .overview-header {
+    margin-bottom: 20px;
+  }
+  .overview-header h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-1);
+    margin-bottom: 4px;
+  }
+  .overview-header p {
+    font-size: 0.8125rem;
+    color: var(--text-2);
+  }
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .ov-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.2s;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .ov-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+  .ov-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ov-icon svg { width: 18px; height: 18px; }
+
+  .ov-card.c1 .ov-icon { background: #FEF2F2; color: #DC2626; }
+  .ov-card.c2 .ov-icon { background: #FFF7ED; color: #EA580C; }
+  .ov-card.c3 .ov-icon { background: #FEF9C3; color: #CA8A04; }
+  .ov-card.c4 .ov-icon { background: #F0FDF4; color: #16A34A; }
+  .ov-card.c5 .ov-icon { background: #ECFDF5; color: #059669; }
+  .ov-card.c6 .ov-icon { background: #EFF6FF; color: #2563EB; }
+  .ov-card.c7 .ov-icon { background: #FAF5FF; color: #9333EA; }
+  .ov-card.c8 .ov-icon { background: #FFF1F2; color: #E11D48; }
+  .ov-card.c9 .ov-icon { background: #F8FAFC; color: #475569; }
+
+  .ov-text h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-1);
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+  .ov-text p {
+    font-size: 0.78rem;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+
+  /* ── Chapter cards ── */
+  .chapter-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .chapter-header {
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .chapter-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: var(--blue-lt);
+    color: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .chapter-icon svg { width: 17px; height: 17px; }
+  .chapter-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-1);
+  }
+  .chapter-body { padding: 0; }
+
+  /* ── Sub-headers ── */
+  .sub-header {
+    padding: 10px 28px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-top: 1px solid var(--border-lt);
+    background: var(--bg);
+  }
+  .sub-header:first-child { border-top: none; }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--bg);
+    color: var(--text-3);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 9px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr {
+    transition: background 0.15s;
+    cursor: default;
+  }
+  tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border-lt); }
+  td { padding: 12px 20px; font-size: 0.875rem; vertical-align: middle; }
+  td:first-child { color: var(--text-1); font-weight: 500; width: 30%; }
+  td:nth-child(2) { color: var(--text-2); width: 42%; font-size: 0.8125rem; }
+  td:last-child { width: 28%; }
+
+  tbody tr:hover { background: #F8FAFC; }
+
+  /* ── Lark links ── */
+  .lark-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 5px 11px;
+    border: 1px solid #BFDBFE;
+    border-radius: var(--radius-sm);
+    background: var(--blue-lt);
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .lark-link:hover {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+  .lark-link svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  /* ── Mind map ── */
+  .map-wrap {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .map-wrap-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .map-wrap-header svg { width: 18px; height: 18px; color: var(--blue); }
+  .map-wrap-header h2 {
+    font-size: 0.9375rem;
+    color: var(--text-1);
+    font-weight: 600;
+  }
+  .map-hint {
+    font-size: 0.78rem;
+    color: var(--text-3);
+    margin-left: auto;
+  }
+  #markmap-container { width: 100%; height: 560px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .hero { padding: 32px 20px 28px; }
+    .hero h1 { font-size: 1.375rem; }
+    .tab-bar { padding: 0 16px; }
+    .content { padding: 20px 12px 60px; }
+    td:nth-child(2) { display: none; }
+    .chapter-header { padding: 16px 20px; }
+    thead th, td { padding: 10px 14px; }
+    td:first-child { width: 45%; }
+    td:last-child { width: 55%; }
+    .overview-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/></svg>
+      Leon 团队 · 新人培训
+    </div>
+    <h1>新人学习大纲</h1>
+    <p>覆盖系统操作、账户管理、交易规则、出入金、IB/CPA、跟单产品、促销赠金及特殊情况处理，共九章。</p>
+    <div class="badge-row">
+      <span class="badge">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" clip-rule="evenodd"/></svg>
+        9 章节
+      </span>
+      <span class="badge">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd"/></svg>
+        60+ Lark 文档
+      </span>
+      <span class="badge">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+        含思维导图
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Tab bar ── -->
+<div class="tab-bar" role="tablist" aria-label="章节导航">
+  <div class="tab active" role="tab" onclick="showSection('overview', this)" tabindex="0">总览</div>
+  <div class="tab" role="tab" onclick="showSection('map', this)" tabindex="0">思维导图</div>
+  <div class="tab" role="tab" onclick="showSection('ch1', this)" tabindex="0">Ch1 系统工具</div>
+  <div class="tab" role="tab" onclick="showSection('ch2', this)" tabindex="0">Ch2 账户管理</div>
+  <div class="tab" role="tab" onclick="showSection('ch3', this)" tabindex="0">Ch3 交易规则</div>
+  <div class="tab" role="tab" onclick="showSection('ch4', this)" tabindex="0">Ch4 出入金</div>
+  <div class="tab" role="tab" onclick="showSection('ch5', this)" tabindex="0">Ch5 IB</div>
+  <div class="tab" role="tab" onclick="showSection('ch6', this)" tabindex="0">Ch6 CPA</div>
+  <div class="tab" role="tab" onclick="showSection('ch7', this)" tabindex="0">Ch7 跟单</div>
+  <div class="tab" role="tab" onclick="showSection('ch8', this)" tabindex="0">Ch8 促销赠金</div>
+  <div class="tab" role="tab" onclick="showSection('ch9', this)" tabindex="0">Ch9 特殊情况</div>
+</div>
+
+<div class="content">
+
+<!-- ── OVERVIEW ── -->
+<div id="section-overview" class="section active">
+  <div class="overview-header">
+    <h2>学习路径总览</h2>
+    <p>选择章节开始学习，点击卡片直接跳转。</p>
+  </div>
+  <div class="overview-grid">
+
+    <div class="ov-card c1" onclick="showSection('ch1', null)" role="button" tabindex="0" aria-label="公司系统与工具">
+      <div class="ov-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>公司系统与工具</h3>
+        <p>工单系统、CRM、OP值班表、Lark 审批、必须加入的群组</p>
+      </div>
+    </div>
+
+    <div class="ov-card c2" onclick="showSection('ch2', null)" role="button" tabindex="0" aria-label="账户管理">
+      <div class="ov-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>账户管理（开户流程）</h3>
+        <p>开户流程、POI/POA 要求、账户类型、2FA、归属转移</p>
+      </div>
+    </div>
+
+    <div class="ov-card c3" onclick="showSection('ch3', null)" role="button" tabindex="0" aria-label="交易账号与规则">
+      <div class="ov-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>交易账号与规则</h3>
+        <p>STP/ECN/Cent/Swap Free 账号、强平规则、杠杆、MT4/MT5</p>
+      </div>
+    </div>
+
+    <div class="ov-card c4" onclick="showSection('ch4', null)" role="button" tabindex="0" aria-label="出入金">
+      <div class="ov-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>出入金</h3>
+        <p>各渠道规则、银联/非银联流程、异常处理、客户间内转</p>
+      </div>
+    </div>
+
+    <div class="ov-card c5" onclick="showSection('ch5', null)" role="button" tabindex="0" aria-label="IB 介绍经纪人">
+      <div class="ov-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>IB（介绍经纪人）</h3>
+        <p>申请流程、返佣计算（STP/ECN/TOC）、返佣文档 SOP</p>
+      </div>
+    </div>
+
+    <div class="ov-card c6" onclick="showSection('ch6', null)" role="button" tabindex="0" aria-label="CPA">
+      <div class="ov-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>CPA</h3>
+        <p>注册流程、Sub-CPA、Cellxpert、归属变动、佣金提款</p>
+      </div>
+    </div>
+
+    <div class="ov-card c7" onclick="showSection('ch7', null)" role="button" tabindex="0" aria-label="跟单产品">
+      <div class="ov-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>跟单产品</h3>
+        <p>PAMM、UM Social（Provider/Follower）、专业跟单 Pro</p>
+      </div>
+    </div>
+
+    <div class="ov-card c8" onclick="showSection('ch8', null)" role="button" tabindex="0" aria-label="促销与赠金">
+      <div class="ov-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>促销与赠金</h3>
+        <p>赠金规则、手动下发、扣除逻辑、VPS 退款</p>
+      </div>
+    </div>
+
+    <div class="ov-card c9" onclick="showSection('ch9', null)" role="button" tabindex="0" aria-label="特殊情况处理">
+      <div class="ov-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>特殊情况处理</h3>
+        <p>黑名单 SOP、销户、客户身故、穿仓清零、投诉</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── MINDMAP ── -->
+<div id="section-map" class="section">
+  <div class="map-wrap">
+    <div class="map-wrap-header">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+      <h2>新人学习路径思维导图</h2>
+      <span class="map-hint">可缩放拖拽</span>
+    </div>
+    <svg id="markmap-container"></svg>
+  </div>
+</div>
+
+<!-- ── CH1 系统工具 ── -->
+<div id="section-ch1" class="section">
+  <div class="chapter-card">
+    <div class="chapter-header">
+      <div class="chapter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <h2>公司系统与工具</h2>
+    </div>
+    <div class="chapter-body">
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>工单系统首次登录</td><td>【首次】如何登录工单系统</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GWDpwWiMUiBmLykc8IDleyaWgmd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>工单提交/回复/审批</td><td>Ticket System Instruction</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Dfb9wRZYci6AJtkteVBls76sgIh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>CRM 使用指南</td><td>CRM（Admin Portal）使用指南</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Uc9fwJOUtizPjskitRdlwwCHgng" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>OP 值班表</td><td>OP &amp; OPCO 值班表</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/WIcJwl15KiPLdlksr0GlAVuMgmW" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Lark 审批申请流程</td><td>Lark Approval 需求申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Nn7DwcG3HisbuzkJNZHlM3k0gQg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Sales 必须加入的群组</td><td>Lark groups that sales are required to join</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/HRWqwXVCoiwCNOkUuNsl5kj0gfe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── CH2 账户管理 ── -->
+<div id="section-ch2" class="section">
+  <div class="chapter-card">
+    <div class="chapter-header">
+      <div class="chapter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h2>账户管理（开户流程）</h2>
+    </div>
+    <div class="chapter-body">
+      <div class="sub-header">开户流程</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>开户总流程</td><td>Account Opening Procedure</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/QW2SwPmcpiVQYSk1EvQl6yTKgNb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>POI/POA 文件要求</td><td>POI &amp; POA 要求说明</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/VqBjwV8vFixLtykD01ylEgsmgah" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>账户类型 + 禁开国家</td><td>Account Types (Supported Currencies + Countries) + Restricted Countries</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/NrbmwP9aJi5rackkSsmlBKjkgbE" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>拒绝开户原因</td><td>Reason for Account Opening Rejection</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/LlYXw9tJ8iyCdAk6rQkl7ZkGgcd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">特殊账户</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>公司账户开设</td><td>Company Account Opening</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/RIOKw1lcMiJQf1kiM2El6n5fgrc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Joint Account 申请</td><td>Joint Account 申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/RQBSw4Ub1iyUm0kvoPkl6FG9gNf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">账户维护</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>2FA 绑定流程</td><td>2FA 绑定流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/EtjFw01I9iETRpkKOuNl5BoEgVh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>账户信息修改</td><td>修改账户个人信息流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/OAnFwfPNJipsOIkTrTtlv8Obgaf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>归属转移规则</td><td>Client/CPA/IB Ownership Application Process + Rules</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/UjFRwSH44iJqZaks6Ejl7DoTgpg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── CH3 交易规则 ── -->
+<div id="section-ch3" class="section">
+  <div class="chapter-card">
+    <div class="chapter-header">
+      <div class="chapter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      </div>
+      <h2>交易账号与规则</h2>
+    </div>
+    <div class="chapter-body">
+      <div class="sub-header">账号类型</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>账号类型总览（STP/ECN/Cent/Swap Free）</td><td>About Trading Account</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/WS1RwBp61iYssrk8RjZlzyYnglb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Swap Free 说明 + 申请</td><td>Swap Free 交易账号说明 + 申请</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/PpHWwSLm4i0m8RkKOchln7Wig2g" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>美分账户说明</td><td>Cent Trading Account Explanation</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/J2QUw4KZAieVkAknghmlLQikgGh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>ECN 手续费扣取方式</td><td>ECN 交易账户手续费执行方式</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/QSIcwiC39iBXUakAB4tlC1rLgDh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>杠杆说明</td><td>Leverage</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/SBlBw0IEYiAV2Jkf8iNlH0DigCe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">交易规则</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>强平规则</td><td>Forced Liquidation Rules</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/OFWswkGw1iOEZbkqBAXlz47FgOh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>挂单须知</td><td>Pending Order FAQ</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Ts7hwTEEgi3suhkDNaylVXA6gUc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>MT4/MT5 连接问题排查</td><td>MT4/MT5 APP 与 PC 版连接问题排查指南</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/RVzUw7hBOin8bikKLddl1LiJgjd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>交易账号归档规则</td><td>交易账号归档</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/CbPDw6DIvimrC6kIxm3lE2Ubgge" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── CH4 出入金 ── -->
+<div id="section-ch4" class="section">
+  <div class="chapter-card">
+    <div class="chapter-header">
+      <div class="chapter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <h2>出入金</h2>
+    </div>
+    <div class="chapter-body">
+      <div class="sub-header">基础规则</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>出入金总规则</td><td>Deposit &amp; Withdrawal Guideline</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/PznmwZdjSimVcBkP40NlbwyngCh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>出入金 FAQ</td><td>Deposit &amp; Withdrawal FAQ</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/KklOwv21biIMY0kwCwGloWv9gbc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">具体渠道</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>银联出入金流程</td><td>UnionPay Deposit / Withdrawal Flow</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/DOSFwVkddim73WkIEbYlSDTDgnd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>非银联出金流程</td><td>Non-UnionPay Withdrawal Flowchart</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/IcVcwC5PMiB9VukkEjrlTcH3gvg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>客户间内转规则</td><td>Transfer between client</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Y3fgwGwEbiF6B8kuej3layHjgXb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">异常处理</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>异常警报处理流程</td><td>Deposit &amp; Withdrawal Abnormality Alert Handling Process</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/R4t2wmO08iZBPOkNmD7lqwBggCh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── CH5 IB ── -->
+<div id="section-ch5" class="section">
+  <div class="chapter-card">
+    <div class="chapter-header">
+      <div class="chapter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <h2>IB（介绍经纪人）</h2>
+    </div>
+    <div class="chapter-body">
+      <div class="sub-header">申请流程</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>IB 申请须知</td><td>IB 申请须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/QHFIwdJltiLBpEkOLTelYPuagmf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>IB 申请流程（自动化）</td><td>IB 申请流程 (IB 自动化)</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/JuOjwBaSTi7C44kndNvlJCosg7g" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Sales 跟进 IB 申请指南</td><td>Sales Guidelines for Following Up IB Applications</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/OrJuwJDUWiQ2a8krtcVljwB6gAh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">返佣计算</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>STP 加点 / ECN 加佣规则</td><td>STP 加点 / ECN 加佣</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZbDuwuOJsiSthRkVChVlNSYogMg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>STP 返点计算</td><td>STP 返点计算</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/KXxqwgRUjiL96kkGaMMlgpBvgdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>ECN 返佣计算</td><td>ECN 返佣计算</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/D1Nuw9Ttxiknvskm8qFlEyvwgyb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>TOC 公式逻辑</td><td>TOC 公式逻辑</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/YW7ewZVXmi71EKk84dEljoLvgsg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>IB 返佣文档使用 SOP</td><td>IB 返佣文档使用教程 SOP</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/SIiFwoDs1ibvOXkCBnVlIsUJgke" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">其他</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>IB 转账须知</td><td>IB 转账须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/YvVqwtccBi0MkbkQLdJlx3idgHb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>IB API 设置</td><td>IB API 设置</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/EWFMwX5YViZCRikbx5ClufpDgUb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── CH6 CPA ── -->
+<div id="section-ch6" class="section">
+  <div class="chapter-card">
+    <div class="chapter-header">
+      <div class="chapter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      </div>
+      <h2>CPA</h2>
+    </div>
+    <div class="chapter-body">
+      <div class="sub-header">注册与管理</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>CPA 注册流程</td><td>CPA 注册流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/I2syw4EAWi4o31kwvCQlXDMlgff" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>CPA 禁开国家</td><td>CPA 禁开国（无法成为 CPA）</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/LnkEwcuiRixMtykOglwlWvQmgHh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Sub-CPA 注册流程</td><td>Sub-CPA 注册流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZhX1wadhvid2h0kBIvjlRAtzgCD" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Cellxpert 登录+常用功能</td><td>Cellxpert 登录+常用功能</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/IvvvwBFXcibFhjkmTFMlhPiKgmh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">佣金与归属</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>CPA 归属变动流程</td><td>CPA/CPA 客户 归属变动申请流程 + 规则</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/SWPGwrBKWiPUI1k9INgly9AOgdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>CPA 佣金提款流程</td><td>CPA 佣金提款流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/TtwcwlB8BiWBv6kym9zljgKtgYd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>CPA 销售须知（CRM）</td><td>CRM（Admin Portal）CPA 销售须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/FLufwMlG1iSDDlk1G6ulbrPygKc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── CH7 跟单 ── -->
+<div id="section-ch7" class="section">
+  <div class="chapter-card">
+    <div class="chapter-header">
+      <div class="chapter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+      </div>
+      <h2>跟单产品</h2>
+    </div>
+    <div class="chapter-body">
+      <div class="sub-header">7A · PAMM</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>PAMM 概述与运作</td><td>PAMM 使用手册 + 须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/MFcmwwPpji8DgNkocmjlOGdQgOg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>PAMM Master 申请流程</td><td>PAMM Master 申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Mz6AwgdSeilAvvkQM09lZjTogJe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>PAMM Agent Commission 设置</td><td>PAMM Agent Commission 设置申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GNXtwAs0EimUG2kU5dfl2LSUgNb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">7B · UM Social（社交跟单）</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>如何成为 Provider + 设置 Offer</td><td>How to Become Provider + Setup Guide</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Jb5RwOzoKiqDl0kWdtFlsQxSgfd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Provider 须知</td><td>Provider 须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/DREzw6kzWiqMVykhhSOlOCVTgkb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Follower 用户指南</td><td>How to become Follower + User Guide</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZalMwm8oiiZvB8knQGxl7mjrgWc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>UM Social 评级计算逻辑</td><td>UM Social 评级 —— 计算逻辑</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/I700wgLa6iqkeuk9ZIvlpQV5gAh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>UM Social FAQ（Provider）</td><td>UM Social Provider FAQ</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/LFbGwMVIBiJRTGkbjf8lDH9EgHc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>UM Social FAQ（Follower）</td><td>Social Trading Follower 疑问</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Kis8wYJEEiE8oJk3QNqlQncXgrd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+      <div class="sub-header">7C · 专业跟单（Copy Trading Pro）</div>
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>影子账户申请流程</td><td>专业跟单交易 - 影子账户申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/YsD4w5NSZiOFN6kx2Mnl5pUBgkb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>Agent 设置申请</td><td>专业跟单交易 - Agent 设置申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/D4kUwD9QgiA2REknGQIl213ygrf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>0滑点申请</td><td>专业跟单交易 - 0滑点申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZzJJwdInkiWdKekZKSIlAaWjgvb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>跳船计划申请</td><td>专业跟单交易 - 跳船计划申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/BALAwEqYeiJAgLkhfCllywbVgee" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>异常排查流程</td><td>专业跟单交易 - 异常排查流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/BMl9wuwTriW8gBkPGyelzezCgBf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── CH8 促销赠金 ── -->
+<div id="section-ch8" class="section">
+  <div class="chapter-card">
+    <div class="chapter-header">
+      <div class="chapter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+      </div>
+      <h2>促销与赠金</h2>
+    </div>
+    <div class="chapter-body">
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>赠金活动规则详细</td><td>Credit Bonus Details</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Q899wbRVBiLh9wk6LGzl3eGRgxd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>手动下发赠金流程</td><td>Manual Credit Bonus Application Procedure</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/UMjqwnnGliWOQBkiUG2lS9BfgIh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>赠金扣除逻辑（出金/内转）</td><td>Withdrawal + Internal Transfer Credit Bonus Deduction Logic</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Zo3xwityLiLZGokFHdRlKhUqgqe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>VPS 退款申请流程</td><td>VPS 退款申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/BbXow7fQlivS8Jkfm31l2rJMgSd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>赠金取消国家名单</td><td>List of Countries Removed from Deposit Bonus</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ISj0w8ADaifDExkiZSWl3fRwgab" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── CH9 特殊情况 ── -->
+<div id="section-ch9" class="section">
+  <div class="chapter-card">
+    <div class="chapter-header">
+      <div class="chapter-icon" style="background:#FEF2F2; color:#DC2626;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <h2>特殊情况处理（进阶）</h2>
+    </div>
+    <div class="chapter-body">
+      <table>
+        <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
+        <tbody>
+          <tr><td>黑名单客户处理 SOP</td><td>Blacklist Client Investigation Handling SOP</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/G3fhwuAsIilNRkkvQ7ElZFyrgHf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>销户流程</td><td>Account Closure Process</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/L6bpweIxbiqgjck50b6l0lDUgzf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>客户身故出金/变更持有人</td><td>Withdrawal Process for Deceased Clients</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/I3fMwNLXdihd8nkCNJBllljMgMe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>穿仓清零处理</td><td>Negative Balance Write Off</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/LQ93wOU3Qil7uXk7jt0l9smEg8c" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>客户投诉处理流程</td><td>Client Complaint toward Sales/ IB</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/LHPmwfnXwiPlpVkySUSlEVimgnh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td>税务发票政策</td><td>IB / CPA 业务不提供税务发票</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/WKoNwA5daiBIqgkxyImlE5yggdg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .content -->
+
+<script>
+function showSection(id, tabEl) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+  document.getElementById('section-' + id).classList.add('active');
+
+  if (tabEl) {
+    tabEl.classList.add('active');
+    tabEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  } else {
+    document.querySelectorAll('.tab').forEach(t => {
+      if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + id + "'")) {
+        t.classList.add('active');
+        t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    });
+  }
+
+  if (id === 'map' && !window._markmapInited) {
+    window._markmapInited = true;
+    initMarkmap();
+  }
+}
+
+// Keyboard navigation for tabs and cards
+document.querySelectorAll('.tab, .ov-card').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      el.click();
+    }
+  });
+});
+
+function initMarkmap() {
+  const { Markmap } = window.markmap;
+  const md = `# 新人学习路径
+
+## 第一章 系统与工具
+### 工单系统
+- 首次登录工单系统
+- 工单提交/回复/审批
+### CRM 使用指南
+### 日常运营
+- OP 值班表
+- Lark 审批流程
+- 必须加入的群组
+
+## 第二章 账户管理
+### 开户流程
+- 开户总流程
+- POI/POA 文件要求
+- 账户类型+禁开国家
+- 拒绝开户原因
+### 特殊账户
+- 公司账户开设
+- Joint Account 申请
+### 账户维护
+- 2FA 绑定流程
+- 账户信息修改
+- 归属转移规则
+
+## 第三章 交易账号与规则
+### 账号类型
+- STP/ECN/Cent/Swap Free 总览
+- Swap Free 说明+申请
+- 美分账户说明
+- ECN 手续费扣取
+- 杠杆说明
+### 交易规则
+- 强平规则
+- 挂单须知
+- MT4/MT5 连接问题排查
+- 交易账号归档
+
+## 第四章 出入金
+### 基础规则
+- 出入金总规则
+- 出入金 FAQ
+### 具体渠道
+- 银联出入金流程
+- 非银联出金流程
+- 客户间内转规则
+### 异常处理
+- 异常警报处理流程
+
+## 第五章 IB（介绍经纪人）
+### 申请流程
+- IB 申请须知
+- IB 申请流程（自动化）
+- Sales 跟进指南
+### 返佣计算
+- STP 加点/ECN 加佣
+- STP 返点计算
+- ECN 返佣计算
+- TOC 公式逻辑
+- 返佣文档 SOP
+### 其他
+- IB 转账须知
+- IB API 设置
+
+## 第六章 CPA
+### 注册与管理
+- CPA 注册流程
+- CPA 禁开国家
+- Sub-CPA 注册流程
+- Cellxpert 使用
+### 佣金与归属
+- 归属变动流程
+- 佣金提款流程
+- CRM 销售须知
+
+## 第七章 跟单产品
+### PAMM
+- PAMM 使用手册+须知
+- PAMM Master 申请流程
+- Agent Commission 设置
+### UM Social
+- 如何成为 Provider
+- Provider 须知
+- 如何成为 Follower
+- 评级计算逻辑
+- Provider FAQ / Follower FAQ
+### 专业跟单 Pro
+- 影子账户申请
+- Agent 设置申请
+- 0滑点申请
+- 跳船计划
+- 异常排查流程
+
+## 第八章 促销与赠金
+- 赠金活动规则
+- 手动下发赠金流程
+- 赠金扣除逻辑
+- VPS 退款申请
+- 赠金取消国家名单
+
+## 第九章 特殊情况（进阶）
+- 黑名单客户处理 SOP
+- 销户流程
+- 客户身故处理
+- 穿仓清零处理
+- 客户投诉处理
+- 税务发票政策`;
+
+  const { root } = window.markmap.Transformer
+    ? new window.markmap.Transformer().transform(md)
+    : window.markmap.transform(md);
+
+  Markmap.create('#markmap-container', {
+    maxWidth: 300,
+    colorFreezeLevel: 2,
+    duration: 500,
+  }, root);
+}
+</script>
+</body>
+</html>
