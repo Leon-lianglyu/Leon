@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/mind-elixir@4/dist/MindElixir.iife.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -333,7 +332,8 @@
     color: var(--text-3);
     margin-left: auto;
   }
-  #markmap-container { width: 100%; height: 520px; }
+  #markmap-container { width: 100%; height: 540px; background: var(--bg); border-radius: 8px; overflow: hidden; cursor: grab; }
+  #markmap-container:active { cursor: grabbing; }
 
   /* ── Responsive ── */
   @media (max-width: 640px) {
@@ -1064,186 +1064,131 @@ document.querySelectorAll('.tab, .ov-card').forEach(el => {
 });
 
 function initMarkmap() {
-  const me = new MindElixir({
-    el: '#markmap-container',
-    draggable: true,
-    contextMenu: false,
-    toolBar: false,
-    nodeMenu: false,
-    keypress: false,
-    allowUndo: false,
-  });
+  const container = document.getElementById('markmap-container');
+  container.innerHTML = '';
 
-  const data = {
-    nodeData: {
-      id: 'root',
-      topic: '新人学习路径',
-      root: true,
-      direction: 2,
-      children: [
-        {
-          id: 'ch1', topic: '第一章 系统与工具',
-          children: [
-            { id: 'ch1a', topic: '工单系统', children: [
-              { id: 'ch1a1', topic: '首次登录工单系统' },
-              { id: 'ch1a2', topic: '工单提交/回复/审批' },
-            ]},
-            { id: 'ch1b', topic: 'CRM 使用指南' },
-            { id: 'ch1c', topic: '日常运营', children: [
-              { id: 'ch1c1', topic: 'OP 值班表' },
-              { id: 'ch1c2', topic: 'Lark 审批流程' },
-              { id: 'ch1c3', topic: '必须加入的群组' },
-            ]},
-          ]
-        },
-        {
-          id: 'ch2', topic: '第二章 账户管理',
-          children: [
-            { id: 'ch2a', topic: '开户流程', children: [
-              { id: 'ch2a1', topic: '开户总流程' },
-              { id: 'ch2a2', topic: 'POI/POA 文件要求' },
-              { id: 'ch2a3', topic: '账户类型+禁开国家' },
-              { id: 'ch2a4', topic: '拒绝开户原因' },
-            ]},
-            { id: 'ch2b', topic: '特殊账户', children: [
-              { id: 'ch2b1', topic: '公司账户开设' },
-              { id: 'ch2b2', topic: 'Joint Account 申请' },
-            ]},
-            { id: 'ch2c', topic: '账户维护', children: [
-              { id: 'ch2c1', topic: '2FA 绑定流程' },
-              { id: 'ch2c2', topic: '账户信息修改' },
-              { id: 'ch2c3', topic: '归属转移规则' },
-            ]},
-          ]
-        },
-        {
-          id: 'ch3', topic: '第三章 交易账号与规则',
-          children: [
-            { id: 'ch3a', topic: '账号类型', children: [
-              { id: 'ch3a1', topic: 'STP/ECN/Cent/Swap Free 总览' },
-              { id: 'ch3a2', topic: 'Swap Free 说明+申请' },
-              { id: 'ch3a3', topic: '美分账户说明' },
-              { id: 'ch3a4', topic: 'ECN 手续费扣取' },
-              { id: 'ch3a5', topic: '杠杆说明' },
-            ]},
-            { id: 'ch3b', topic: '交易规则', children: [
-              { id: 'ch3b1', topic: '强平规则' },
-              { id: 'ch3b2', topic: '挂单须知' },
-              { id: 'ch3b3', topic: 'MT4/MT5 连接问题排查' },
-              { id: 'ch3b4', topic: '交易账号归档' },
-            ]},
-          ]
-        },
-        {
-          id: 'ch4', topic: '第四章 出入金',
-          children: [
-            { id: 'ch4a', topic: '基础规则', children: [
-              { id: 'ch4a1', topic: '出入金总规则' },
-              { id: 'ch4a2', topic: '出入金 FAQ' },
-            ]},
-            { id: 'ch4b', topic: '具体渠道', children: [
-              { id: 'ch4b1', topic: '银联出入金流程' },
-              { id: 'ch4b2', topic: '非银联出金流程' },
-              { id: 'ch4b3', topic: '客户间内转规则' },
-            ]},
-            { id: 'ch4c', topic: '异常处理', children: [
-              { id: 'ch4c1', topic: '异常警报处理流程' },
-            ]},
-          ]
-        },
-        {
-          id: 'ch5', topic: '第五章 IB（介绍经纪人）',
-          children: [
-            { id: 'ch5a', topic: '申请流程', children: [
-              { id: 'ch5a1', topic: 'IB 申请须知' },
-              { id: 'ch5a2', topic: 'IB 申请流程（自动化）' },
-              { id: 'ch5a3', topic: 'Sales 跟进指南' },
-            ]},
-            { id: 'ch5b', topic: '返佣计算', children: [
-              { id: 'ch5b1', topic: 'STP 加点/ECN 加佣' },
-              { id: 'ch5b2', topic: 'STP 返点计算' },
-              { id: 'ch5b3', topic: 'ECN 返佣计算' },
-              { id: 'ch5b4', topic: 'TOC 公式逻辑' },
-              { id: 'ch5b5', topic: '返佣文档 SOP' },
-            ]},
-            { id: 'ch5c', topic: '其他', children: [
-              { id: 'ch5c1', topic: 'IB 转账须知' },
-              { id: 'ch5c2', topic: 'IB API 设置' },
-            ]},
-          ]
-        },
-        {
-          id: 'ch6', topic: '第六章 CPA',
-          children: [
-            { id: 'ch6a', topic: '注册与管理', children: [
-              { id: 'ch6a1', topic: 'CPA 注册流程' },
-              { id: 'ch6a2', topic: 'CPA 禁开国家' },
-              { id: 'ch6a3', topic: 'Sub-CPA 注册流程' },
-              { id: 'ch6a4', topic: 'Cellxpert 使用' },
-            ]},
-            { id: 'ch6b', topic: '佣金与归属', children: [
-              { id: 'ch6b1', topic: '归属变动流程' },
-              { id: 'ch6b2', topic: '佣金提款流程' },
-              { id: 'ch6b3', topic: 'CRM 销售须知' },
-            ]},
-          ]
-        },
-        {
-          id: 'ch7', topic: '第七章 跟单产品',
-          children: [
-            { id: 'ch7a', topic: 'PAMM', children: [
-              { id: 'ch7a1', topic: 'PAMM 使用手册+须知' },
-              { id: 'ch7a2', topic: 'PAMM Master 申请流程' },
-              { id: 'ch7a3', topic: 'Agent Commission 设置' },
-            ]},
-            { id: 'ch7b', topic: 'UM Social', children: [
-              { id: 'ch7b1', topic: '如何成为 Provider' },
-              { id: 'ch7b2', topic: 'Provider 须知' },
-              { id: 'ch7b3', topic: '如何成为 Follower' },
-              { id: 'ch7b4', topic: '评级计算逻辑' },
-            ]},
-            { id: 'ch7c', topic: '专业跟单 Pro', children: [
-              { id: 'ch7c1', topic: '影子账户申请' },
-              { id: 'ch7c2', topic: 'Agent 设置申请' },
-              { id: 'ch7c3', topic: '0滑点申请' },
-              { id: 'ch7c4', topic: '跳船计划' },
-            ]},
-          ]
-        },
-        {
-          id: 'ch8', topic: '第八章 促销与赠金',
-          children: [
-            { id: 'ch8a', topic: '赠金活动规则' },
-            { id: 'ch8b', topic: '手动下发赠金流程' },
-            { id: 'ch8c', topic: '赠金扣除逻辑' },
-            { id: 'ch8d', topic: 'VPS 退款申请' },
-            { id: 'ch8e', topic: '赠金取消国家名单' },
-          ]
-        },
-        {
-          id: 'ch9', topic: '第九章 特殊情况（进阶）',
-          children: [
-            { id: 'ch9a', topic: '黑名单客户处理 SOP' },
-            { id: 'ch9b', topic: '销户流程' },
-            { id: 'ch9c', topic: '客户身故处理' },
-            { id: 'ch9d', topic: '穿仓清零处理' },
-            { id: 'ch9e', topic: '客户投诉处理' },
-            { id: 'ch9f', topic: '税务发票政策' },
-          ]
-        },
-      ]
-    }
+  const CHAPTERS = {
+    left: [
+      { title: '第一章\n系统与工具', color: '#3B82F6', subs: ['工单系统', 'CRM 使用指南', '日常运营'] },
+      { title: '第二章\n账户管理',   color: '#8B5CF6', subs: ['开户流程', '特殊账户', '账户维护'] },
+      { title: '第三章\n交易账号',   color: '#EC4899', subs: ['账号类型', '交易规则'] },
+      { title: '第四章\n出入金',     color: '#F59E0B', subs: ['基础规则', '渠道处理', '异常处理'] },
+    ],
+    right: [
+      { title: '第五章\nIB',        color: '#10B981', subs: ['申请流程', '返佣计算', '其他'] },
+      { title: '第六章\nCPA',       color: '#06B6D4', subs: ['注册管理', '佣金归属'] },
+      { title: '第七章\n跟单',      color: '#6366F1', subs: ['PAMM', 'UM Social', '跟单 Pro'] },
+      { title: '第八章\n促销赠金',  color: '#F97316', subs: ['赠金规则', '操作流程'] },
+      { title: '第九章\n特殊情况',  color: '#EF4444', subs: ['黑名单', '销户流程', '其他'] },
+    ]
   };
 
-  me.init(data);
+  const W = container.clientWidth || 900;
+  const H = 540;
+  const ns = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, text) {
+    const e = document.createElementNS(ns, tag);
+    Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
 
-  // Auto-fit after render
+  const svg = el('svg', { width: W, height: H, style: 'display:block;width:100%;height:100%' });
+  const g = el('g', {});
+  svg.appendChild(g);
+  container.appendChild(svg);
+
+  // Pan & zoom state
+  let sc = 1, tx = 0, ty = 0;
+  let drag = false, ox = 0, oy = 0, otx = 0, oty = 0;
+  function applyT() { g.setAttribute('transform', `translate(${tx},${ty}) scale(${sc})`); }
+
+  svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    const d = e.deltaY < 0 ? 1.12 : 0.89;
+    const r = svg.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    tx = mx - (mx - tx) * d; ty = my - (my - ty) * d; sc *= d;
+    applyT();
+  }, { passive: false });
+  svg.addEventListener('mousedown', e => { drag=true; ox=e.clientX; oy=e.clientY; otx=tx; oty=ty; });
+  window.addEventListener('mousemove', e => { if(!drag) return; tx=otx+e.clientX-ox; ty=oty+e.clientY-oy; applyT(); });
+  window.addEventListener('mouseup', () => { drag=false; });
+
+  // Layout params
+  const cx = W / 2, cy = H / 2;
+  const CH_XL = cx - 195, CH_XR = cx + 195;
+  const SB_XL = cx - 365, SB_XR = cx + 365;
+  const RW = 130, RH = 42, CHW = 108, CHH = 52, SBW = 96, SBH = 28;
+  const VSEP_CH = 14, VSEP_SB = 26;
+
+  function chYs(list) {
+    const total = list.reduce((s, ch) => s + CHH + (ch.subs.length - 1) * VSEP_SB + VSEP_CH, -VSEP_CH);
+    const startY = cy - total / 2;
+    const ys = []; let y = startY;
+    list.forEach(ch => { ys.push(y + CHH/2); y += CHH + (ch.subs.length - 1) * VSEP_SB + VSEP_CH; });
+    return ys;
+  }
+
+  function node(x, y, w, h, text, color, fsz) {
+    const ng = el('g', {});
+    ng.appendChild(el('rect', { x: x-w/2, y: y-h/2, width:w, height:h, rx:8,
+      fill: color+'1a', stroke: color, 'stroke-width':1.5 }));
+    text.split('\n').forEach((line, i, arr) => {
+      const dy = (i - (arr.length-1)/2) * (fsz * 1.35);
+      ng.appendChild(el('text', { x, y: y+dy, 'text-anchor':'middle', 'dominant-baseline':'central',
+        fill: color, 'font-size': fsz, 'font-weight':'600', 'font-family':'Inter,system-ui,sans-serif' }, line));
+    });
+    return ng;
+  }
+
+  function path(x1, y1, x2, y2, color) {
+    const mx = (x1 + x2) / 2;
+    return el('path', { d:`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`,
+      fill:'none', stroke:color, 'stroke-width':1.5, opacity:0.55 });
+  }
+
+  // Root
+  g.appendChild(node(cx, cy, RW, RH, '新人学习路径', '#1E40AF', 13));
+
+  // Left
+  const lYs = chYs(CHAPTERS.left);
+  CHAPTERS.left.forEach((ch, i) => {
+    const chy = lYs[i];
+    g.insertBefore(path(cx - RW/2, cy, CH_XL + CHW/2, chy, ch.color), g.firstChild);
+    g.appendChild(node(CH_XL, chy, CHW, CHH, ch.title, ch.color, 11));
+    const cnt = ch.subs.length;
+    ch.subs.forEach((sub, j) => {
+      const sy = chy - (cnt-1)*VSEP_SB/2 + j*VSEP_SB;
+      g.insertBefore(path(CH_XL - CHW/2, chy, SB_XL + SBW/2, sy, ch.color), g.firstChild);
+      g.appendChild(node(SB_XL, sy, SBW, SBH, sub, ch.color, 10));
+    });
+  });
+
+  // Right
+  const rYs = chYs(CHAPTERS.right);
+  CHAPTERS.right.forEach((ch, i) => {
+    const chy = rYs[i];
+    g.insertBefore(path(cx + RW/2, cy, CH_XR - CHW/2, chy, ch.color), g.firstChild);
+    g.appendChild(node(CH_XR, chy, CHW, CHH, ch.title, ch.color, 11));
+    const cnt = ch.subs.length;
+    ch.subs.forEach((sub, j) => {
+      const sy = chy - (cnt-1)*VSEP_SB/2 + j*VSEP_SB;
+      g.insertBefore(path(CH_XR + CHW/2, chy, SB_XR - SBW/2, sy, ch.color), g.firstChild);
+      g.appendChild(node(SB_XR, sy, SBW, SBH, sub, ch.color, 10));
+    });
+  });
+
+  // Auto-fit
   setTimeout(() => {
-    if (me.toCenter) me.toCenter();
-    if (me.scaleVal !== undefined) {
-      me.scale(0.65);
-    }
-  }, 100);
+    const bb = g.getBBox();
+    const pad = 24;
+    sc = Math.min((W - pad*2) / bb.width, (H - pad*2) / bb.height, 1);
+    tx = (W - bb.width * sc) / 2 - bb.x * sc;
+    ty = (H - bb.height * sc) / 2 - bb.y * sc;
+    applyT();
+  }, 50);
+
 }
 </script>
 </body>
