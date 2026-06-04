@@ -418,10 +418,9 @@
   tbody tr { transition: background var(--transition); cursor: default; }
   tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border-lt); }
   td { padding: 11px 20px; font-size: 0.85rem; vertical-align: middle; }
-  /* After JS injects check-td as col 1: col2=主题, col3=Lark文件, col4=链接 */
-  td:nth-child(2) { color: var(--text-1); font-weight: 500; width: 30%; }
-  td:nth-child(3) { color: var(--text-2); width: 42%; font-size: 0.8rem; }
-  td:last-child { width: 28%; }
+  td.topic-col { color: var(--text-1); font-weight: 500; width: 30%; }
+  td.doc-col   { color: var(--text-2); width: 42%; font-size: 0.8rem; }
+  td.link-col  { width: 28%; }
   tbody tr:hover { background: var(--border-lt); }
 
   /* ── Lark links ── */
@@ -578,11 +577,11 @@
     .hero { padding: 32px 20px 28px; }
     .hero h1 { font-size: 1.375rem; }
     .content { padding: 20px 12px 60px; }
-    td:nth-child(3) { display: none; }
+    td.doc-col { display: none; }
     .chapter-header { padding: 14px 16px; }
     thead th, td { padding: 9px 12px; }
-    td:first-child { width: 45%; }
-    td:last-child { width: 55%; }
+    td.topic-col { width: 50%; }
+    td.link-col  { width: 50%; }
     .overview-grid { grid-template-columns: 1fr; }
     #search-input { width: 120px; }
     #search-input:focus { width: 150px; }
@@ -1197,6 +1196,11 @@ function initProgress() {
         td.appendChild(makeDoneBtn(itemId, ch, isDone));
         if (isDone) row.classList.add('checked-row');
         row.insertBefore(td, row.firstChild);
+        // label columns by role so CSS can target them regardless of nth-child position
+        const cols = row.querySelectorAll('td:not(.check-td)');
+        if (cols[0]) cols[0].classList.add('topic-col');
+        if (cols[1]) cols[1].classList.add('doc-col');
+        if (cols[2]) cols[2].classList.add('link-col');
       });
     });
     updateChapterProgress(ch);
