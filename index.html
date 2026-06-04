@@ -7,9 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="https://cdn.jsdelivr.net/npm/markmap-view@0.17"></script>
-<script src="https://cdn.jsdelivr.net/npm/markmap-lib@0.17"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mind-elixir@4/dist/mind-elixir.css">
+<script src="https://cdn.jsdelivr.net/npm/mind-elixir@4/dist/mind-elixir.umd.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -111,6 +110,7 @@
     border-bottom: 1px solid var(--border);
     padding: 0 48px;
     display: flex;
+    justify-content: center;
     gap: 0;
     position: sticky;
     top: 0;
@@ -334,7 +334,7 @@
     color: var(--text-3);
     margin-left: auto;
   }
-  #markmap-container { width: 100%; height: 560px; }
+  #markmap-container { width: 100%; height: 520px; }
 
   /* ── Responsive ── */
   @media (max-width: 640px) {
@@ -594,7 +594,7 @@
       <h2>新人学习路径思维导图</h2>
       <span class="map-hint">可缩放拖拽</span>
     </div>
-    <svg id="markmap-container"></svg>
+    <div id="markmap-container"></div>
   </div>
 </div>
 
@@ -1048,8 +1048,8 @@ function showSection(id, tabEl) {
     });
   }
 
-  if (id === 'map' && !window._markmapInited) {
-    window._markmapInited = true;
+  if (id === 'map' && !window._mindmapInited) {
+    window._mindmapInited = true;
     initMarkmap();
   }
 }
@@ -1065,125 +1065,178 @@ document.querySelectorAll('.tab, .ov-card').forEach(el => {
 });
 
 function initMarkmap() {
-  const { Markmap } = window.markmap;
-  const md = `# 新人学习路径
+  const me = new MindElixir({
+    el: '#markmap-container',
+    direction: MindElixir.SIDE,
+    draggable: false,
+    contextMenu: false,
+    toolBar: false,
+    nodeMenu: false,
+    keypress: false,
+    allowUndo: false,
+  });
 
-## 第一章 系统与工具
-### 工单系统
-- 首次登录工单系统
-- 工单提交/回复/审批
-### CRM 使用指南
-### 日常运营
-- OP 值班表
-- Lark 审批流程
-- 必须加入的群组
+  const data = {
+    nodeData: {
+      id: 'root',
+      topic: '新人学习路径',
+      root: true,
+      children: [
+        {
+          id: 'ch1', topic: '第一章 系统与工具',
+          children: [
+            { id: 'ch1a', topic: '工单系统', children: [
+              { id: 'ch1a1', topic: '首次登录工单系统' },
+              { id: 'ch1a2', topic: '工单提交/回复/审批' },
+            ]},
+            { id: 'ch1b', topic: 'CRM 使用指南' },
+            { id: 'ch1c', topic: '日常运营', children: [
+              { id: 'ch1c1', topic: 'OP 值班表' },
+              { id: 'ch1c2', topic: 'Lark 审批流程' },
+              { id: 'ch1c3', topic: '必须加入的群组' },
+            ]},
+          ]
+        },
+        {
+          id: 'ch2', topic: '第二章 账户管理',
+          children: [
+            { id: 'ch2a', topic: '开户流程', children: [
+              { id: 'ch2a1', topic: '开户总流程' },
+              { id: 'ch2a2', topic: 'POI/POA 文件要求' },
+              { id: 'ch2a3', topic: '账户类型+禁开国家' },
+              { id: 'ch2a4', topic: '拒绝开户原因' },
+            ]},
+            { id: 'ch2b', topic: '特殊账户', children: [
+              { id: 'ch2b1', topic: '公司账户开设' },
+              { id: 'ch2b2', topic: 'Joint Account 申请' },
+            ]},
+            { id: 'ch2c', topic: '账户维护', children: [
+              { id: 'ch2c1', topic: '2FA 绑定流程' },
+              { id: 'ch2c2', topic: '账户信息修改' },
+              { id: 'ch2c3', topic: '归属转移规则' },
+            ]},
+          ]
+        },
+        {
+          id: 'ch3', topic: '第三章 交易账号与规则',
+          children: [
+            { id: 'ch3a', topic: '账号类型', children: [
+              { id: 'ch3a1', topic: 'STP/ECN/Cent/Swap Free 总览' },
+              { id: 'ch3a2', topic: 'Swap Free 说明+申请' },
+              { id: 'ch3a3', topic: '美分账户说明' },
+              { id: 'ch3a4', topic: 'ECN 手续费扣取' },
+              { id: 'ch3a5', topic: '杠杆说明' },
+            ]},
+            { id: 'ch3b', topic: '交易规则', children: [
+              { id: 'ch3b1', topic: '强平规则' },
+              { id: 'ch3b2', topic: '挂单须知' },
+              { id: 'ch3b3', topic: 'MT4/MT5 连接问题排查' },
+              { id: 'ch3b4', topic: '交易账号归档' },
+            ]},
+          ]
+        },
+        {
+          id: 'ch4', topic: '第四章 出入金',
+          children: [
+            { id: 'ch4a', topic: '基础规则', children: [
+              { id: 'ch4a1', topic: '出入金总规则' },
+              { id: 'ch4a2', topic: '出入金 FAQ' },
+            ]},
+            { id: 'ch4b', topic: '具体渠道', children: [
+              { id: 'ch4b1', topic: '银联出入金流程' },
+              { id: 'ch4b2', topic: '非银联出金流程' },
+              { id: 'ch4b3', topic: '客户间内转规则' },
+            ]},
+            { id: 'ch4c', topic: '异常处理', children: [
+              { id: 'ch4c1', topic: '异常警报处理流程' },
+            ]},
+          ]
+        },
+        {
+          id: 'ch5', topic: '第五章 IB（介绍经纪人）',
+          children: [
+            { id: 'ch5a', topic: '申请流程', children: [
+              { id: 'ch5a1', topic: 'IB 申请须知' },
+              { id: 'ch5a2', topic: 'IB 申请流程（自动化）' },
+              { id: 'ch5a3', topic: 'Sales 跟进指南' },
+            ]},
+            { id: 'ch5b', topic: '返佣计算', children: [
+              { id: 'ch5b1', topic: 'STP 加点/ECN 加佣' },
+              { id: 'ch5b2', topic: 'STP 返点计算' },
+              { id: 'ch5b3', topic: 'ECN 返佣计算' },
+              { id: 'ch5b4', topic: 'TOC 公式逻辑' },
+              { id: 'ch5b5', topic: '返佣文档 SOP' },
+            ]},
+            { id: 'ch5c', topic: '其他', children: [
+              { id: 'ch5c1', topic: 'IB 转账须知' },
+              { id: 'ch5c2', topic: 'IB API 设置' },
+            ]},
+          ]
+        },
+        {
+          id: 'ch6', topic: '第六章 CPA',
+          children: [
+            { id: 'ch6a', topic: '注册与管理', children: [
+              { id: 'ch6a1', topic: 'CPA 注册流程' },
+              { id: 'ch6a2', topic: 'CPA 禁开国家' },
+              { id: 'ch6a3', topic: 'Sub-CPA 注册流程' },
+              { id: 'ch6a4', topic: 'Cellxpert 使用' },
+            ]},
+            { id: 'ch6b', topic: '佣金与归属', children: [
+              { id: 'ch6b1', topic: '归属变动流程' },
+              { id: 'ch6b2', topic: '佣金提款流程' },
+              { id: 'ch6b3', topic: 'CRM 销售须知' },
+            ]},
+          ]
+        },
+        {
+          id: 'ch7', topic: '第七章 跟单产品',
+          children: [
+            { id: 'ch7a', topic: 'PAMM', children: [
+              { id: 'ch7a1', topic: 'PAMM 使用手册+须知' },
+              { id: 'ch7a2', topic: 'PAMM Master 申请流程' },
+              { id: 'ch7a3', topic: 'Agent Commission 设置' },
+            ]},
+            { id: 'ch7b', topic: 'UM Social', children: [
+              { id: 'ch7b1', topic: '如何成为 Provider' },
+              { id: 'ch7b2', topic: 'Provider 须知' },
+              { id: 'ch7b3', topic: '如何成为 Follower' },
+              { id: 'ch7b4', topic: '评级计算逻辑' },
+            ]},
+            { id: 'ch7c', topic: '专业跟单 Pro', children: [
+              { id: 'ch7c1', topic: '影子账户申请' },
+              { id: 'ch7c2', topic: 'Agent 设置申请' },
+              { id: 'ch7c3', topic: '0滑点申请' },
+              { id: 'ch7c4', topic: '跳船计划' },
+            ]},
+          ]
+        },
+        {
+          id: 'ch8', topic: '第八章 促销与赠金',
+          children: [
+            { id: 'ch8a', topic: '赠金活动规则' },
+            { id: 'ch8b', topic: '手动下发赠金流程' },
+            { id: 'ch8c', topic: '赠金扣除逻辑' },
+            { id: 'ch8d', topic: 'VPS 退款申请' },
+            { id: 'ch8e', topic: '赠金取消国家名单' },
+          ]
+        },
+        {
+          id: 'ch9', topic: '第九章 特殊情况（进阶）',
+          children: [
+            { id: 'ch9a', topic: '黑名单客户处理 SOP' },
+            { id: 'ch9b', topic: '销户流程' },
+            { id: 'ch9c', topic: '客户身故处理' },
+            { id: 'ch9d', topic: '穿仓清零处理' },
+            { id: 'ch9e', topic: '客户投诉处理' },
+            { id: 'ch9f', topic: '税务发票政策' },
+          ]
+        },
+      ]
+    }
+  };
 
-## 第二章 账户管理
-### 开户流程
-- 开户总流程
-- POI/POA 文件要求
-- 账户类型+禁开国家
-- 拒绝开户原因
-### 特殊账户
-- 公司账户开设
-- Joint Account 申请
-### 账户维护
-- 2FA 绑定流程
-- 账户信息修改
-- 归属转移规则
-
-## 第三章 交易账号与规则
-### 账号类型
-- STP/ECN/Cent/Swap Free 总览
-- Swap Free 说明+申请
-- 美分账户说明
-- ECN 手续费扣取
-- 杠杆说明
-### 交易规则
-- 强平规则
-- 挂单须知
-- MT4/MT5 连接问题排查
-- 交易账号归档
-
-## 第四章 出入金
-### 基础规则
-- 出入金总规则
-- 出入金 FAQ
-### 具体渠道
-- 银联出入金流程
-- 非银联出金流程
-- 客户间内转规则
-### 异常处理
-- 异常警报处理流程
-
-## 第五章 IB（介绍经纪人）
-### 申请流程
-- IB 申请须知
-- IB 申请流程（自动化）
-- Sales 跟进指南
-### 返佣计算
-- STP 加点/ECN 加佣
-- STP 返点计算
-- ECN 返佣计算
-- TOC 公式逻辑
-- 返佣文档 SOP
-### 其他
-- IB 转账须知
-- IB API 设置
-
-## 第六章 CPA
-### 注册与管理
-- CPA 注册流程
-- CPA 禁开国家
-- Sub-CPA 注册流程
-- Cellxpert 使用
-### 佣金与归属
-- 归属变动流程
-- 佣金提款流程
-- CRM 销售须知
-
-## 第七章 跟单产品
-### PAMM
-- PAMM 使用手册+须知
-- PAMM Master 申请流程
-- Agent Commission 设置
-### UM Social
-- 如何成为 Provider
-- Provider 须知
-- 如何成为 Follower
-- 评级计算逻辑
-- Provider FAQ / Follower FAQ
-### 专业跟单 Pro
-- 影子账户申请
-- Agent 设置申请
-- 0滑点申请
-- 跳船计划
-- 异常排查流程
-
-## 第八章 促销与赠金
-- 赠金活动规则
-- 手动下发赠金流程
-- 赠金扣除逻辑
-- VPS 退款申请
-- 赠金取消国家名单
-
-## 第九章 特殊情况（进阶）
-- 黑名单客户处理 SOP
-- 销户流程
-- 客户身故处理
-- 穿仓清零处理
-- 客户投诉处理
-- 税务发票政策`;
-
-  const { root } = window.markmap.Transformer
-    ? new window.markmap.Transformer().transform(md)
-    : window.markmap.transform(md);
-
-  Markmap.create('#markmap-container', {
-    maxWidth: 300,
-    colorFreezeLevel: 2,
-    duration: 500,
-  }, root);
+  me.init(data);
 }
 </script>
 </body>
