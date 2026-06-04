@@ -7,8 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mind-elixir@4/dist/mind-elixir.css">
-<script src="https://cdn.jsdelivr.net/npm/mind-elixir@4/dist/mind-elixir.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-elixir@4/dist/MindElixir.iife.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1067,7 +1066,6 @@ document.querySelectorAll('.tab, .ov-card').forEach(el => {
 function initMarkmap() {
   const me = new MindElixir({
     el: '#markmap-container',
-    direction: MindElixir.SIDE,
     draggable: false,
     contextMenu: false,
     toolBar: false,
@@ -1081,6 +1079,7 @@ function initMarkmap() {
       id: 'root',
       topic: '新人学习路径',
       root: true,
+      direction: 2,
       children: [
         {
           id: 'ch1', topic: '第一章 系统与工具',
