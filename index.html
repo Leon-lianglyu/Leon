@@ -354,7 +354,7 @@
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
 
-  /* ── Progress badge ── */
+  /* ── Chapter progress badge ── */
   .ch-progress {
     margin-left: auto;
     font-size: 0.8rem;
@@ -373,26 +373,71 @@
     border-color: #BBF7D0;
   }
 
-  /* ── Checkbox column ── */
+  /* ── Done-toggle button column ── */
   .check-th {
-    width: 44px !important;
-    padding: 9px 8px 9px 20px !important;
+    width: 90px !important;
+    padding: 9px 8px 9px 16px !important;
   }
   .check-td {
-    width: 44px !important;
-    padding: 0 8px 0 20px !important;
-    text-align: center;
+    width: 90px !important;
+    padding: 8px 8px 8px 16px !important;
   }
-  .row-check {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--blue);
+  .done-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-3);
     cursor: pointer;
-    flex-shrink: 0;
+    white-space: nowrap;
+    transition: all 0.15s;
+    user-select: none;
   }
-  tbody tr.checked-row { background: #F0FDF4; }
-  tbody tr.checked-row:hover { background: #DCFCE7; }
-  tbody tr.checked-row td:first-child { color: var(--text-3); }
+  .done-btn:hover {
+    border-color: #86EFAC;
+    color: #16A34A;
+    background: #F0FDF4;
+  }
+  .done-btn.done {
+    border-color: #86EFAC;
+    background: #F0FDF4;
+    color: #16A34A;
+  }
+  .done-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+  tbody tr.checked-row { background: #F8FFF9; }
+  tbody tr.checked-row td:nth-child(2) { color: var(--text-3); text-decoration: line-through; text-decoration-color: #BBF7D0; }
+
+  /* ── Overview card progress ── */
+  .ov-progress {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-lt);
+  }
+  .ov-progress-bar-wrap {
+    background: var(--border-lt);
+    border-radius: 4px;
+    height: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+  .ov-progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--blue);
+    transition: width 0.3s;
+  }
+  .ov-progress-bar.full { background: #16A34A; }
+  .ov-progress-label {
+    font-size: 0.72rem;
+    color: var(--text-3);
+    font-weight: 500;
+  }
+  .ov-progress-label.full { color: #16A34A; }
 </style>
 </head>
 <body>
@@ -876,69 +921,110 @@ function saveProgress(state) {
   localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
 }
 
+const CHAPTERS = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'];
+
+const ICON_EMPTY = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/></svg>`;
+const ICON_DONE  = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6.5" fill="#DCFCE7" stroke="#16A34A"/><polyline points="5,8.5 7,10.5 11,6" stroke="#16A34A" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function makeDoneBtn(itemId, ch, isDone) {
+  const btn = document.createElement('button');
+  btn.className = 'done-btn' + (isDone ? ' done' : '');
+  btn.dataset.itemId = itemId;
+  btn.dataset.chapter = ch;
+  btn.innerHTML = isDone ? ICON_DONE + '已完成' : ICON_EMPTY + '标记完成';
+  btn.addEventListener('click', () => {
+    const s = loadProgress();
+    const nowDone = !s[itemId];
+    s[itemId] = nowDone;
+    saveProgress(s);
+    btn.className = 'done-btn' + (nowDone ? ' done' : '');
+    btn.innerHTML = nowDone ? ICON_DONE + '已完成' : ICON_EMPTY + '标记完成';
+    btn.closest('tr').classList.toggle('checked-row', nowDone);
+    updateChapterProgress(ch);
+    updateOverviewCard(ch);
+  });
+  return btn;
+}
+
 function initProgress() {
   const state = loadProgress();
-  const chapters = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'];
 
-  chapters.forEach(ch => {
+  CHAPTERS.forEach(ch => {
     const section = document.getElementById('section-' + ch);
     if (!section) return;
 
-    // Add progress badge to chapter header
+    // Progress badge in chapter header
     const header = section.querySelector('.chapter-header');
     const badge = document.createElement('span');
     badge.className = 'ch-progress';
     badge.id = 'progress-' + ch;
     header.appendChild(badge);
 
-    // Add checkbox column to every table in this section
+    // Inject done-btn column into each table
     const allRows = section.querySelectorAll('tbody tr');
     section.querySelectorAll('table').forEach(table => {
-      // Insert empty <th>
       const thead = table.querySelector('thead tr');
       if (thead) {
         const th = document.createElement('th');
         th.className = 'check-th';
         thead.insertBefore(th, thead.firstChild);
       }
-      // Insert checkbox <td> in each row
       table.querySelectorAll('tbody tr').forEach(row => {
         const rowIdx = [...allRows].indexOf(row);
         const itemId = ch + '-' + rowIdx;
+        const isDone = !!state[itemId];
         const td = document.createElement('td');
         td.className = 'check-td';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.className = 'row-check';
-        cb.dataset.chapter = ch;
-        cb.dataset.itemId = itemId;
-        cb.checked = !!state[itemId];
-        if (cb.checked) row.classList.add('checked-row');
-        cb.addEventListener('change', e => {
-          const s = loadProgress();
-          s[e.target.dataset.itemId] = e.target.checked;
-          saveProgress(s);
-          row.classList.toggle('checked-row', e.target.checked);
-          updateChapterProgress(e.target.dataset.chapter);
-        });
-        td.appendChild(cb);
+        td.appendChild(makeDoneBtn(itemId, ch, isDone));
+        if (isDone) row.classList.add('checked-row');
         row.insertBefore(td, row.firstChild);
       });
     });
 
     updateChapterProgress(ch);
   });
+
+  // Inject progress into overview cards
+  document.querySelectorAll('.ov-card').forEach(card => {
+    const onclick = card.getAttribute('onclick') || '';
+    const m = onclick.match(/'(ch\d+)'/);
+    if (!m) return;
+    const ch = m[1];
+    const wrap = document.createElement('div');
+    wrap.className = 'ov-progress';
+    wrap.id = 'ov-progress-' + ch;
+    wrap.innerHTML = `<div class="ov-progress-bar-wrap"><div class="ov-progress-bar" style="width:0%"></div></div><span class="ov-progress-label">0 / 0 已完成</span>`;
+    card.querySelector('.ov-text').appendChild(wrap);
+    updateOverviewCard(ch);
+  });
 }
 
 function updateChapterProgress(ch) {
   const section = document.getElementById('section-' + ch);
-  const boxes = section.querySelectorAll('.row-check');
-  const total = boxes.length;
-  const checked = [...boxes].filter(b => b.checked).length;
+  const btns = section.querySelectorAll('.done-btn');
+  const total = btns.length;
+  const done = [...btns].filter(b => b.classList.contains('done')).length;
   const badge = document.getElementById('progress-' + ch);
-  if (!badge) return;
-  badge.textContent = checked + '/' + total;
-  badge.className = 'ch-progress' + (total > 0 && checked === total ? ' complete' : '');
+  if (badge) {
+    badge.textContent = done + '/' + total;
+    badge.className = 'ch-progress' + (total > 0 && done === total ? ' complete' : '');
+  }
+}
+
+function updateOverviewCard(ch) {
+  const wrap = document.getElementById('ov-progress-' + ch);
+  if (!wrap) return;
+  const section = document.getElementById('section-' + ch);
+  const btns = section.querySelectorAll('.done-btn');
+  const total = btns.length;
+  const done = [...btns].filter(b => b.classList.contains('done')).length;
+  const pct = total > 0 ? (done / total * 100).toFixed(0) : 0;
+  const full = total > 0 && done === total;
+  wrap.querySelector('.ov-progress-bar').style.width = pct + '%';
+  wrap.querySelector('.ov-progress-bar').className = 'ov-progress-bar' + (full ? ' full' : '');
+  const label = wrap.querySelector('.ov-progress-label');
+  label.textContent = done + ' / ' + total + ' 已完成';
+  label.className = 'ov-progress-label' + (full ? ' full' : '');
 }
 
 document.addEventListener('DOMContentLoaded', initProgress);
