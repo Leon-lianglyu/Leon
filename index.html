@@ -10,24 +10,46 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ── Design tokens ── */
   :root {
-    --bg:        #F8FAFC;
+    --bg:        #F8FAFB;
     --surface:   #FFFFFF;
-    --border:    #E2E8F0;
-    --border-lt: #F1F5F9;
-    --text-1:    #0F172A;
-    --text-2:    #475569;
-    --text-3:    #94A3B8;
-    --blue:      #2563EB;
-    --blue-lt:   #EFF6FF;
-    --blue-dark: #1D4ED8;
-    --navy:      #1E3A5F;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-    --shadow-lg: 0 10px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.04);
+    --border:    #E5E9EF;
+    --border-lt: #F0F3F7;
+    --text-1:    #0D1117;
+    --text-2:    #4B5563;
+    --text-3:    #9CA3AF;
+    --primary:      #059669;
+    --primary-lt:   #ECFDF5;
+    --primary-dark: #047857;
+    --primary-border: #A7F3D0;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.09), 0 3px 8px rgba(0,0,0,0.04);
     --radius:    12px;
     --radius-sm: 8px;
+    --transition: 0.18s ease;
   }
+
+  /* ── Dark mode tokens ── */
+  body.dark {
+    --bg:        #111827;
+    --surface:   #1F2937;
+    --border:    #374151;
+    --border-lt: #2D3748;
+    --text-1:    #F9FAFB;
+    --text-2:    #9CA3AF;
+    --text-3:    #6B7280;
+    --primary:      #34D399;
+    --primary-lt:   #064E3B;
+    --primary-dark: #6EE7B7;
+    --primary-border: #065F46;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+  }
+
+  html { scroll-behavior: smooth; }
 
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -36,15 +58,31 @@
     line-height: 1.6;
     font-size: 15px;
     -webkit-font-smoothing: antialiased;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  /* ── Scroll progress bar ── */
+  #scroll-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--primary);
+    z-index: 9999;
+    transition: width 0.1s linear;
+    border-radius: 0 2px 2px 0;
   }
 
   /* ── Hero ── */
   .hero {
-    background: linear-gradient(135deg, #0F1F3D 0%, #1E3A5F 50%, #1D4ED8 100%);
+    background: linear-gradient(135deg, #064E3B 0%, #065F46 45%, #059669 100%);
     color: white;
     padding: 52px 48px 44px;
     position: relative;
     overflow: hidden;
+  }
+  body.dark .hero {
+    background: linear-gradient(135deg, #022C22 0%, #064E3B 50%, #065F46 100%);
   }
   .hero::before {
     content: '';
@@ -52,7 +90,7 @@
     right: -80px; top: -80px;
     width: 360px; height: 360px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.04);
   }
   .hero::after {
     content: '';
@@ -60,7 +98,7 @@
     right: 80px; bottom: -100px;
     width: 240px; height: 240px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.05);
   }
   .hero-inner { position: relative; z-index: 1; max-width: 720px; }
   .hero-eyebrow {
@@ -83,7 +121,7 @@
   }
   .hero p {
     font-size: 0.9375rem;
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.75);
     max-width: 580px;
     line-height: 1.7;
   }
@@ -92,80 +130,210 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 20px;
     padding: 5px 13px;
     font-size: 0.78rem;
     font-weight: 500;
     backdrop-filter: blur(8px);
-    color: rgba(255,255,255,0.88);
+    color: rgba(255,255,255,0.9);
   }
 
   /* ── Tab bar ── */
   .tab-bar {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 0 48px;
+    padding: 0 16px 0 16px;
     display: flex;
-    justify-content: center;
+    align-items: center;
     gap: 0;
     position: sticky;
     top: 0;
     z-index: 200;
     box-shadow: var(--shadow-sm);
+    transition: background var(--transition), border-color var(--transition);
+  }
+  .tab-nav {
+    display: flex;
+    flex: 1;
     overflow-x: auto;
     scrollbar-width: none;
   }
-  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-nav::-webkit-scrollbar { display: none; }
   .tab {
-    padding: 14px 18px;
-    font-size: 0.8125rem;
+    padding: 14px 16px;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--text-2);
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
+    transition: color var(--transition), border-color var(--transition);
     white-space: nowrap;
     user-select: none;
+    flex-shrink: 0;
   }
-  .tab:hover { color: var(--blue); }
-  .tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+  .tab:hover { color: var(--primary); }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+  /* ── Tab bar controls (search + dark toggle) ── */
+  .tab-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 12px;
+    border-left: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 32px;
+    height: 32px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 9px;
+    width: 14px; height: 14px;
+    color: var(--text-3);
+    cursor: pointer;
+    z-index: 1;
+  }
+  #search-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px 6px 30px;
+    font-size: 0.8rem;
+    color: var(--text-1);
+    outline: none;
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-color: transparent;
+    background: transparent;
+    transition: width 0.25s ease, border-color 0.2s, box-shadow 0.2s, padding 0.25s ease, background 0.2s;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  #search-input.expanded, #search-input:focus {
+    border-color: var(--border);
+    background: var(--bg);
+    width: 200px;
+    padding-left: 30px;
+    padding-right: 10px;
+    cursor: text;
+  }
+  #search-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(5,150,105,0.12);
+  }
+  .search-wrap svg { cursor: pointer; }
+  #search-input::placeholder { color: var(--text-3); }
+  body.dark #search-input:focus {
+    box-shadow: 0 0 0 3px rgba(52,211,153,0.15);
+  }
+  .dark-toggle {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-2);
+    transition: background var(--transition), color var(--transition), border-color var(--transition);
+    flex-shrink: 0;
+  }
+  .dark-toggle:hover { background: var(--primary-lt); color: var(--primary); border-color: var(--primary-border); }
+  .dark-toggle svg { width: 15px; height: 15px; }
 
   /* ── Content area ── */
   .content { max-width: 1000px; margin: 0 auto; padding: 36px 24px 80px; }
 
-  /* ── Section visibility ── */
+  /* ── Section visibility + transition ── */
   .section { display: none; }
-  .section.active { display: block; }
+  .section.active {
+    display: block;
+    animation: fadeUp 0.2s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-  /* ── Overview grid ── */
-  .overview-header {
+  /* ── Global progress dashboard ── */
+  .global-progress {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
     margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 24px;
   }
-  .overview-header h2 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--text-1);
-    margin-bottom: 4px;
+  .gp-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 72px;
   }
-  .overview-header p {
-    font-size: 0.8125rem;
+  .gp-stat-num {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .gp-stat-label {
+    font-size: 0.72rem;
+    color: var(--text-3);
+    margin-top: 3px;
+    white-space: nowrap;
+  }
+  .gp-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+  .gp-bar-section { flex: 1; }
+  .gp-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
     color: var(--text-2);
+    margin-bottom: 7px;
+    font-weight: 500;
   }
+  .gp-bar-wrap {
+    background: var(--border-lt);
+    border-radius: 6px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .gp-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    background: var(--primary);
+    transition: width 0.4s ease;
+  }
+  .gp-bar-fill.full { background: var(--primary); }
+
+  /* ── Overview header ── */
+  .overview-header { margin-bottom: 16px; }
+  .overview-header h2 { font-size: 1rem; font-weight: 600; color: var(--text-1); margin-bottom: 3px; }
+  .overview-header p  { font-size: 0.8rem; color: var(--text-2); }
 
   .overview-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 12px;
   }
   .ov-card {
     background: var(--surface);
     border-radius: var(--radius);
-    padding: 20px 22px;
+    padding: 18px 20px;
     box-shadow: var(--shadow-sm);
     cursor: pointer;
-    transition: box-shadow 0.2s, transform 0.2s;
+    transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
     border: 1px solid var(--border);
     display: flex;
     gap: 14px;
@@ -174,21 +342,19 @@
   .ov-card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
+    border-color: var(--primary-border);
   }
   .ov-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-  .ov-icon svg { width: 18px; height: 18px; }
+  .ov-icon svg { width: 17px; height: 17px; }
 
   .ov-card.c1 .ov-icon { background: #FEF2F2; color: #DC2626; }
   .ov-card.c2 .ov-icon { background: #FFF7ED; color: #EA580C; }
-  .ov-card.c3 .ov-icon { background: #FEF9C3; color: #CA8A04; }
+  .ov-card.c3 .ov-icon { background: #FEFCE8; color: #CA8A04; }
   .ov-card.c4 .ov-icon { background: #F0FDF4; color: #16A34A; }
   .ov-card.c5 .ov-icon { background: #ECFDF5; color: #059669; }
   .ov-card.c6 .ov-icon { background: #EFF6FF; color: #2563EB; }
@@ -196,18 +362,18 @@
   .ov-card.c8 .ov-icon { background: #FFF1F2; color: #E11D48; }
   .ov-card.c9 .ov-icon { background: #F8FAFC; color: #475569; }
 
-  .ov-text h3 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-1);
-    margin-bottom: 5px;
-    line-height: 1.4;
-  }
-  .ov-text p {
-    font-size: 0.78rem;
-    color: var(--text-2);
-    line-height: 1.55;
-  }
+  body.dark .ov-card.c1 .ov-icon { background: rgba(220,38,38,0.15); }
+  body.dark .ov-card.c2 .ov-icon { background: rgba(234,88,12,0.15); }
+  body.dark .ov-card.c3 .ov-icon { background: rgba(202,138,4,0.15); }
+  body.dark .ov-card.c4 .ov-icon { background: rgba(22,163,74,0.15); }
+  body.dark .ov-card.c5 .ov-icon { background: rgba(5,150,105,0.15); }
+  body.dark .ov-card.c6 .ov-icon { background: rgba(37,99,235,0.15); }
+  body.dark .ov-card.c7 .ov-icon { background: rgba(147,51,234,0.15); }
+  body.dark .ov-card.c8 .ov-icon { background: rgba(225,29,72,0.15); }
+  body.dark .ov-card.c9 .ov-icon { background: rgba(71,85,105,0.15); }
+
+  .ov-text h3 { font-size: 0.875rem; font-weight: 600; color: var(--text-1); margin-bottom: 4px; line-height: 1.4; }
+  .ov-text p  { font-size: 0.775rem; color: var(--text-2); line-height: 1.55; }
 
   /* ── Chapter cards ── */
   .chapter-card {
@@ -217,41 +383,36 @@
     margin-bottom: 24px;
     overflow: hidden;
     border: 1px solid var(--border);
+    transition: background var(--transition), border-color var(--transition);
   }
   .chapter-header {
-    padding: 18px 28px;
+    padding: 16px 24px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 12px;
+    background: var(--surface);
   }
   .chapter-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 9px;
-    background: var(--blue-lt);
-    color: var(--blue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    background: var(--primary-lt);
+    color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-  .chapter-icon svg { width: 17px; height: 17px; }
-  .chapter-header h2 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-1);
-  }
+  .chapter-icon svg { width: 16px; height: 16px; }
+  .chapter-header h2 { font-size: 0.9375rem; font-weight: 600; color: var(--text-1); }
   .chapter-body { padding: 0; }
 
   /* ── Sub-headers ── */
   .sub-header {
-    padding: 10px 28px;
-    font-size: 0.72rem;
+    padding: 9px 24px;
+    font-size: 0.7rem;
     font-weight: 700;
-    color: var(--text-2);
+    color: var(--text-3);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
     border-top: 1px solid var(--border-lt);
     background: var(--bg);
   }
@@ -262,49 +423,45 @@
   thead th {
     background: var(--bg);
     color: var(--text-3);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 9px 20px;
+    letter-spacing: 0.07em;
+    padding: 8px 20px;
     text-align: left;
     border-bottom: 1px solid var(--border);
   }
-  tbody tr {
-    transition: background 0.15s;
-    cursor: default;
-  }
+  tbody tr { transition: background var(--transition); cursor: default; }
   tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border-lt); }
-  td { padding: 12px 20px; font-size: 0.875rem; vertical-align: middle; }
-  td:first-child { color: var(--text-1); font-weight: 500; width: 30%; }
-  td:nth-child(2) { color: var(--text-2); width: 42%; font-size: 0.8125rem; }
-  td:last-child { width: 28%; }
-
-  tbody tr:hover { background: #F8FAFC; }
+  td { padding: 11px 20px; font-size: 0.85rem; vertical-align: middle; }
+  td.topic-col { color: var(--text-1); font-weight: 500; width: 30%; }
+  td.doc-col   { color: var(--text-2); width: 42%; font-size: 0.8rem; }
+  td.link-col  { width: 28%; }
+  tbody tr:hover { background: var(--border-lt); }
 
   /* ── Lark links ── */
   .lark-link {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    color: var(--blue);
+    color: var(--primary);
     text-decoration: none;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 500;
-    padding: 5px 11px;
-    border: 1px solid #BFDBFE;
+    padding: 5px 10px;
+    border: 1px solid var(--primary-border);
     border-radius: var(--radius-sm);
-    background: var(--blue-lt);
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    background: var(--primary-lt);
+    transition: background var(--transition), color var(--transition), border-color var(--transition);
     cursor: pointer;
     white-space: nowrap;
   }
   .lark-link:hover {
-    background: var(--blue);
+    background: var(--primary);
     color: white;
-    border-color: var(--blue);
+    border-color: var(--primary);
   }
-  .lark-link svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .lark-link svg { width: 11px; height: 11px; flex-shrink: 0; }
 
   /* ── Mind map ── */
   .map-wrap {
@@ -312,134 +469,247 @@
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
-    padding: 24px;
+    padding: 22px;
     margin-bottom: 24px;
   }
   .map-wrap-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
-  .map-wrap-header svg { width: 18px; height: 18px; color: var(--blue); }
-  .map-wrap-header h2 {
-    font-size: 0.9375rem;
-    color: var(--text-1);
-    font-weight: 600;
+  .map-wrap-header svg { width: 17px; height: 17px; color: var(--primary); }
+  .map-wrap-header h2 { font-size: 0.9375rem; color: var(--text-1); font-weight: 600; }
+  .map-hint { font-size: 0.775rem; color: var(--text-3); margin-left: auto; }
+  #markmap-container {
+    width: 100%; height: 540px;
+    background: var(--bg);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: grab;
+    border: 1px solid var(--border-lt);
   }
-  .map-hint {
-    font-size: 0.78rem;
-    color: var(--text-3);
-    margin-left: auto;
-  }
-  #markmap-container { width: 100%; height: 540px; background: var(--bg); border-radius: 8px; overflow: hidden; cursor: grab; }
   #markmap-container:active { cursor: grabbing; }
-
-  /* ── Responsive ── */
-  @media (max-width: 640px) {
-    .hero { padding: 32px 20px 28px; }
-    .hero h1 { font-size: 1.375rem; }
-    .tab-bar { padding: 0 16px; }
-    .content { padding: 20px 12px 60px; }
-    td:nth-child(2) { display: none; }
-    .chapter-header { padding: 16px 20px; }
-    thead th, td { padding: 10px 14px; }
-    td:first-child { width: 45%; }
-    td:last-child { width: 55%; }
-    .overview-grid { grid-template-columns: 1fr; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { transition: none !important; animation: none !important; }
-  }
 
   /* ── Chapter progress badge ── */
   .ch-progress {
     margin-left: auto;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-3);
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 3px 10px;
-    letter-spacing: 0.02em;
+    padding: 2px 10px;
     flex-shrink: 0;
   }
-  .ch-progress.complete {
-    color: #16A34A;
-    background: #F0FDF4;
-    border-color: #BBF7D0;
-  }
+  .ch-progress.complete { color: var(--primary); background: var(--primary-lt); border-color: var(--primary-border); }
 
-  /* ── Done-toggle button column ── */
-  .check-th {
-    width: 90px !important;
-    padding: 9px 8px 9px 16px !important;
-  }
-  .check-td {
-    width: 90px !important;
-    padding: 8px 8px 8px 16px !important;
-  }
+  /* ── Done-toggle button ── */
+  .check-th { width: 90px !important; padding: 8px 8px 8px 16px !important; }
+  .check-td { width: 90px !important; padding: 7px 8px 7px 16px !important; }
   .done-btn {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 0.75rem;
+    font-size: 0.73rem;
     font-weight: 500;
-    padding: 4px 10px;
+    padding: 4px 9px;
     border-radius: 20px;
     border: 1.5px solid var(--border);
     background: var(--surface);
     color: var(--text-3);
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.15s;
+    transition: all var(--transition);
     user-select: none;
   }
-  .done-btn:hover {
-    border-color: #86EFAC;
-    color: #16A34A;
-    background: #F0FDF4;
-  }
-  .done-btn.done {
-    border-color: #86EFAC;
-    background: #F0FDF4;
-    color: #16A34A;
-  }
+  .done-btn:hover { border-color: var(--primary-border); color: var(--primary); background: var(--primary-lt); }
+  .done-btn.done  { border-color: var(--primary-border); background: var(--primary-lt); color: var(--primary); }
   .done-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
-  tbody tr.checked-row { background: #F8FFF9; }
-  tbody tr.checked-row td:nth-child(2) { color: var(--text-3); text-decoration: line-through; text-decoration-color: #BBF7D0; }
+  tbody tr.checked-row { background: var(--primary-lt) !important; }
+  tbody tr.checked-row td:nth-child(2) { color: var(--text-3); text-decoration: line-through; text-decoration-color: var(--primary-border); }
 
   /* ── Overview card progress ── */
-  .ov-progress {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-lt);
+  .ov-progress { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-lt); }
+  .ov-progress-bar-wrap { background: var(--border-lt); border-radius: 4px; height: 3px; overflow: hidden; margin-bottom: 5px; }
+  .ov-progress-bar { height: 100%; border-radius: 4px; background: var(--primary); transition: width 0.3s; }
+  .ov-progress-label { font-size: 0.72rem; color: var(--text-3); font-weight: 500; }
+  .ov-progress-label.full { color: var(--primary); }
+
+  /* ── Search results section ── */
+  .search-results-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
   }
-  .ov-progress-bar-wrap {
-    background: var(--border-lt);
-    border-radius: 4px;
-    height: 4px;
-    overflow: hidden;
-    margin-bottom: 5px;
-  }
-  .ov-progress-bar {
-    height: 100%;
-    border-radius: 4px;
-    background: var(--blue);
-    transition: width 0.3s;
-  }
-  .ov-progress-bar.full { background: #16A34A; }
-  .ov-progress-label {
-    font-size: 0.72rem;
+  .search-results-header h2 { font-size: 1rem; font-weight: 600; color: var(--text-1); }
+  .search-count {
+    font-size: 0.775rem;
     color: var(--text-3);
-    font-weight: 500;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 10px;
   }
-  .ov-progress-label.full { color: #16A34A; }
+  .search-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-3);
+    font-size: 0.9rem;
+  }
+  .search-group { margin-bottom: 20px; }
+  .search-group-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-3);
+    padding: 6px 4px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border-lt);
+  }
+  .search-result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 4px;
+    gap: 16px;
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .search-result-row:hover { border-color: var(--primary-border); box-shadow: var(--shadow-sm); }
+  .search-result-name { font-size: 0.85rem; font-weight: 500; color: var(--text-1); }
+  .search-result-name mark { background: rgba(5,150,105,0.18); color: var(--primary); border-radius: 2px; padding: 0 2px; }
+  body.dark .search-result-name mark { background: rgba(52,211,153,0.2); }
+  .search-result-sub { font-size: 0.78rem; color: var(--text-3); margin-top: 1px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .hero { padding: 32px 20px 28px; }
+    .hero h1 { font-size: 1.375rem; }
+    .content { padding: 20px 12px 60px; }
+    .overview-grid { grid-template-columns: 1fr; }
+    #search-input.expanded, #search-input:focus { width: 150px; }
+    .global-progress { flex-wrap: wrap; gap: 16px; }
+  }
+  /* 仅在手机小屏才隐藏文件名列 */
+  @media (max-width: 560px) {
+    td.doc-col { display: none; }
+    .chapter-header { padding: 14px 16px; }
+    thead th, td { padding: 9px 12px; }
+    td.topic-col { width: 50%; }
+    td.link-col  { width: 50%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+
+  /* ── Extra / 补充知识 section ── */
+  .extra-layout {
+    display: flex;
+    gap: 0;
+    min-height: 70vh;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .extra-nav {
+    width: 220px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    background: var(--surface-2);
+  }
+  .extra-nav-group {
+    padding: 10px 0 4px;
+  }
+  .extra-nav-group-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    padding: 4px 16px 6px;
+  }
+  .extra-nav-item {
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    border-left: 2px solid transparent;
+    line-height: 1.4;
+  }
+  .extra-nav-item:hover { background: var(--accent-lt); color: var(--text-1); }
+  .extra-nav-item.active { background: var(--accent-lt); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+  .extra-nav-item { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+  .extra-nav-item .extra-check { flex-shrink: 0; width: 14px; height: 14px; opacity: 0; color: var(--primary); transition: opacity 0.2s; }
+  .extra-nav-item.read .extra-check { opacity: 1; }
+  .extra-nav-label { flex: 1; min-width: 0; }
+  /* progress bar above extra layout */
+  .extra-progress-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .extra-progress-badge { font-size: 0.75rem; font-weight: 600; color: var(--text-3); background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 2px 10px; white-space: nowrap; }
+  .extra-progress-badge.complete { color: var(--primary); border-color: var(--primary-border); background: var(--primary-lt); }
+  .extra-prog-bar-wrap { flex: 1; background: var(--border-lt); border-radius: 4px; height: 3px; overflow: hidden; }
+  .extra-prog-bar { height: 100%; border-radius: 4px; background: var(--primary); transition: width 0.3s; }
+  /* mark-read button in content */
+  .extra-read-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 32px; padding: 7px 16px;
+    font-size: 0.8rem; font-weight: 500; font-family: inherit;
+    border-radius: 20px; border: 1.5px solid var(--border);
+    background: transparent; color: var(--text-3); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .extra-read-btn:hover { border-color: var(--primary-border); color: var(--primary); background: var(--primary-lt); }
+  .extra-read-btn.done { border-color: var(--primary-border); color: var(--primary); background: var(--primary-lt); }
+  .extra-read-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .extra-content {
+    flex: 1;
+    padding: 32px 36px 48px;
+    overflow-y: auto;
+    min-width: 0;
+  }
+  /* MD rendering styles */
+  .md-body h1 { font-size: 1.375rem; font-weight: 700; color: var(--text-1); margin: 0 0 20px; letter-spacing: -0.02em; line-height: 1.3; }
+  .md-body h2 { font-size: 1.0625rem; font-weight: 600; color: var(--text-1); margin: 28px 0 12px; letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .md-body h3 { font-size: 0.9375rem; font-weight: 600; color: var(--text-1); margin: 20px 0 8px; }
+  .md-body h4 { font-size: 0.875rem; font-weight: 600; color: var(--text-2); margin: 16px 0 6px; }
+  .md-body p { font-size: 0.875rem; color: var(--text-2); line-height: 1.75; margin: 0 0 12px; }
+  .md-body ul, .md-body ol { padding-left: 20px; margin: 0 0 12px; }
+  .md-body li { font-size: 0.875rem; color: var(--text-2); line-height: 1.7; margin-bottom: 4px; }
+  .md-body strong { color: var(--text-1); font-weight: 600; }
+  .md-body em { color: var(--text-2); font-style: italic; }
+  .md-body code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.8125rem; background: rgba(255,255,255,0.06); color: var(--accent); border-radius: 4px; padding: 1px 5px; border: 1px solid var(--border); }
+  .md-body pre { background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin: 12px 0; overflow-x: auto; }
+  .md-body pre code { background: none; border: none; padding: 0; color: var(--text-2); font-size: 0.8125rem; }
+  .md-body blockquote { border-left: 3px solid var(--accent-border); background: var(--accent-lt); border-radius: 0 8px 8px 0; padding: 10px 16px; margin: 12px 0; }
+  .md-body blockquote p { color: var(--text-2); margin: 0; font-size: 0.84375rem; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .md-body table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.8375rem; }
+  .md-body thead th { background: var(--surface-2); color: var(--text-3); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  .md-body tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border-lt); }
+  .md-body tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .md-body td { padding: 9px 12px; color: var(--text-2); vertical-align: top; }
+  .md-body td:first-child { color: var(--text-1); font-weight: 500; }
+  body.dark .md-body code { background: rgba(255,255,255,0.08); }
+  @media (max-width: 640px) {
+    .extra-layout { flex-direction: column; }
+    .extra-nav { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 200px; }
+    .extra-content { padding: 20px 16px 40px; }
+  }
 </style>
 </head>
 <body>
+
+<div id="scroll-bar"></div>
 
 <!-- ── Hero ── -->
 <div class="hero">
@@ -469,23 +739,67 @@
 
 <!-- ── Tab bar ── -->
 <div class="tab-bar" role="tablist" aria-label="章节导航">
-  <div class="tab active" role="tab" onclick="showSection('overview', this)" tabindex="0">总览</div>
-  <div class="tab" role="tab" onclick="showSection('map', this)" tabindex="0">思维导图</div>
-  <div class="tab" role="tab" onclick="showSection('ch1', this)" tabindex="0">Ch1 系统工具</div>
-  <div class="tab" role="tab" onclick="showSection('ch2', this)" tabindex="0">Ch2 账户管理</div>
-  <div class="tab" role="tab" onclick="showSection('ch3', this)" tabindex="0">Ch3 交易规则</div>
-  <div class="tab" role="tab" onclick="showSection('ch4', this)" tabindex="0">Ch4 出入金</div>
-  <div class="tab" role="tab" onclick="showSection('ch5', this)" tabindex="0">Ch5 IB</div>
-  <div class="tab" role="tab" onclick="showSection('ch6', this)" tabindex="0">Ch6 CPA</div>
-  <div class="tab" role="tab" onclick="showSection('ch7', this)" tabindex="0">Ch7 跟单</div>
-  <div class="tab" role="tab" onclick="showSection('ch8', this)" tabindex="0">Ch8 促销赠金</div>
-  <div class="tab" role="tab" onclick="showSection('ch9', this)" tabindex="0">Ch9 特殊情况</div>
+  <div class="tab-nav">
+    <div class="tab active" role="tab" onclick="showSection('overview', this)" tabindex="0">总览</div>
+    <div class="tab" role="tab" onclick="showSection('map', this)" tabindex="0">思维导图</div>
+    <div class="tab" role="tab" onclick="showSection('ch1', this)" tabindex="0">Ch1 系统工具</div>
+    <div class="tab" role="tab" onclick="showSection('ch2', this)" tabindex="0">Ch2 账户管理</div>
+    <div class="tab" role="tab" onclick="showSection('ch3', this)" tabindex="0">Ch3 交易规则</div>
+    <div class="tab" role="tab" onclick="showSection('ch4', this)" tabindex="0">Ch4 出入金</div>
+    <div class="tab" role="tab" onclick="showSection('ch5', this)" tabindex="0">Ch5 IB</div>
+    <div class="tab" role="tab" onclick="showSection('ch6', this)" tabindex="0">Ch6 CPA</div>
+    <div class="tab" role="tab" onclick="showSection('ch7', this)" tabindex="0">Ch7 跟单</div>
+    <div class="tab" role="tab" onclick="showSection('ch8', this)" tabindex="0">Ch8 促销赠金</div>
+    <div class="tab" role="tab" onclick="showSection('ch9', this)" tabindex="0">Ch9 特殊情况</div>
+    <div class="tab" role="tab" onclick="showSection('extra', this)" tabindex="0">补充知识</div>
+  </div>
+  <div class="tab-controls">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search-input" type="text" placeholder="搜索…" autocomplete="off" aria-label="搜索内容"/>
+    </div>
+    <button class="dark-toggle" id="dark-toggle" aria-label="切换深色模式" title="深色/浅色">
+      <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
+  </div>
 </div>
 
 <div class="content">
 
+<!-- ── SEARCH RESULTS ── -->
+<div id="section-search" class="section">
+  <div class="search-results-header">
+    <h2>搜索结果</h2>
+    <span class="search-count" id="search-count">0 条</span>
+  </div>
+  <div id="search-results-body"></div>
+</div>
+
 <!-- ── OVERVIEW ── -->
 <div id="section-overview" class="section active">
+  <!-- Global progress dashboard -->
+  <div class="global-progress" id="global-progress">
+    <div class="gp-stat">
+      <span class="gp-stat-num" id="gp-done">0</span>
+      <span class="gp-stat-label">已完成</span>
+    </div>
+    <div class="gp-divider"></div>
+    <div class="gp-stat">
+      <span class="gp-stat-num" id="gp-total" style="color:var(--text-2)">0</span>
+      <span class="gp-stat-label">总条目</span>
+    </div>
+    <div class="gp-divider"></div>
+    <div class="gp-bar-section">
+      <div class="gp-bar-label">
+        <span>整体学习进度</span>
+        <span id="gp-pct">0%</span>
+      </div>
+      <div class="gp-bar-wrap">
+        <div class="gp-bar-fill" id="gp-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
   <div class="overview-header">
     <h2>学习路径总览</h2>
     <p>选择章节开始学习，点击卡片直接跳转。</p>
@@ -582,6 +896,16 @@
       </div>
     </div>
 
+    <div class="ov-card" onclick="showSection('extra', null)" role="button" tabindex="0" aria-label="补充知识" style="border-color:rgba(139,92,246,0.2);">
+      <div class="ov-icon" style="background:rgba(139,92,246,0.1);color:#8B5CF6;border-color:rgba(139,92,246,0.25);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </div>
+      <div class="ov-text">
+        <h3>补充知识</h3>
+        <p>CFD 基础与进阶：订单类型、杠杆、掉期、执行模式、监管框架</p>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -610,12 +934,12 @@
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>工单系统首次登录</td><td>【首次】如何登录工单系统</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GWDpwWiMUiBmLykc8IDleyaWgmd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>工单提交/回复/审批</td><td>工单系统使用说明</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GlCLw1vVSikbwGkAnfplMedsgQe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>CRM 使用指南</td><td>CRM（Admin Portal）使用指南</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Uc9fwJOUtizPjskitRdlwwCHgng" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>OP 值班表</td><td>OP &amp; OPCO 值班表</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/WIcJwl15KiPLdlksr0GlAVuMgmW" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Lark 审批申请流程</td><td>Lark Approval 需求申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Nn7DwcG3HisbuzkJNZHlM3k0gQg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Sales 必须加入的群组</td><td>销售必在的 Lark 群组</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/E4URwKdYSiVIMrkJU9JlFwL6g2e" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">工单系统首次登录</td><td class="doc-col">【首次】如何登录工单系统</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GWDpwWiMUiBmLykc8IDleyaWgmd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">工单提交/回复/审批</td><td class="doc-col">工单系统使用说明</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GlCLw1vVSikbwGkAnfplMedsgQe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">CRM 使用指南</td><td class="doc-col">CRM（Admin Portal）使用指南</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Uc9fwJOUtizPjskitRdlwwCHgng" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">OP 值班表</td><td class="doc-col">OP &amp; OPCO 值班表</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/WIcJwl15KiPLdlksr0GlAVuMgmW" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Lark 审批申请流程</td><td class="doc-col">Lark Approval 需求申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Nn7DwcG3HisbuzkJNZHlM3k0gQg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Sales 必须加入的群组</td><td class="doc-col">销售必在的 Lark 群组</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/E4URwKdYSiVIMrkJU9JlFwL6g2e" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -636,27 +960,27 @@
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>开户总流程</td><td>开设个人账户</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/JxBKw3SuuiTzyFkzU3CluxDcg8d" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>POI/POA 文件要求</td><td>POI &amp; POA 要求说明</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/VqBjwV8vFixLtykD01ylEgsmgah" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>账户类型 + 禁开国家</td><td>账户类型（支持的币种+国家）+ 禁开国</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/G64ewUQvni2xcgk1TpzlwzrcgOW" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>拒绝开户原因</td><td>拒绝开户原因</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/P8mnwp2Dmi0OL4k4Ufgl2L2NgSo" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">开户总流程</td><td class="doc-col">开设个人账户</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/JxBKw3SuuiTzyFkzU3CluxDcg8d" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">POI/POA 文件要求</td><td class="doc-col">POI &amp; POA 要求说明</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/VqBjwV8vFixLtykD01ylEgsmgah" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">账户类型 + 禁开国家</td><td class="doc-col">账户类型（支持的币种+国家）+ 禁开国</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/G64ewUQvni2xcgk1TpzlwzrcgOW" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">拒绝开户原因</td><td class="doc-col">拒绝开户原因</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/P8mnwp2Dmi0OL4k4Ufgl2L2NgSo" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">特殊账户</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>公司账户开设</td><td>开设公司账户</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/CxoLw9rI9i9yibk0C51lyamogGc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Joint Account 申请</td><td>Joint Account 申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/RQBSw4Ub1iyUm0kvoPkl6FG9gNf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">公司账户开设</td><td class="doc-col">开设公司账户</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/CxoLw9rI9i9yibk0C51lyamogGc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Joint Account 申请</td><td class="doc-col">Joint Account 申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/RQBSw4Ub1iyUm0kvoPkl6FG9gNf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">账户维护</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>2FA 绑定流程</td><td>2FA 绑定流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/EtjFw01I9iETRpkKOuNl5BoEgVh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>账户信息修改</td><td>修改账户个人信息流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/OAnFwfPNJipsOIkTrTtlv8Obgaf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>归属转移规则</td><td>客户/CPA/IB 转归属申请流程 + 规则</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/N3lfwsbIniHQEIk1mY2lfEPqgCg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">2FA 绑定流程</td><td class="doc-col">2FA 绑定流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/EtjFw01I9iETRpkKOuNl5BoEgVh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">账户信息修改</td><td class="doc-col">修改账户个人信息流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/OAnFwfPNJipsOIkTrTtlv8Obgaf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">归属转移规则</td><td class="doc-col">客户/CPA/IB 转归属申请流程 + 规则</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/N3lfwsbIniHQEIk1mY2lfEPqgCg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -677,21 +1001,21 @@
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>账号类型总览（STP/ECN/Cent/Swap Free）</td><td>关于 交易账号</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/HPYdwP8FDi6kG7k1KPxlSgKQgDk" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Swap Free 说明 + 申请</td><td>Swap Free 交易账号说明 + 申请</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/PpHWwSLm4i0m8RkKOchln7Wig2g" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>美分账户说明</td><td>美分 (Cent) 交易账号说明</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/B9E4weYlzirpwEkfXIPlKpC9gfc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>ECN 手续费扣取方式</td><td>ECN 交易账户手续费执行方式</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/QSIcwiC39iBXUakAB4tlC1rLgDh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>杠杆说明</td><td>杠杆</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Ri4rwXSHeiWaB4kQNIOlcV4qgon" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">账号类型总览（STP/ECN/Cent/Swap Free）</td><td class="doc-col">关于 交易账号</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/HPYdwP8FDi6kG7k1KPxlSgKQgDk" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Swap Free 说明 + 申请</td><td class="doc-col">Swap Free 交易账号说明 + 申请</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/PpHWwSLm4i0m8RkKOchln7Wig2g" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">美分账户说明</td><td class="doc-col">美分 (Cent) 交易账号说明</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/B9E4weYlzirpwEkfXIPlKpC9gfc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">ECN 手续费扣取方式</td><td class="doc-col">ECN 交易账户手续费执行方式</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/QSIcwiC39iBXUakAB4tlC1rLgDh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">杠杆说明</td><td class="doc-col">杠杆</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Ri4rwXSHeiWaB4kQNIOlcV4qgon" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">交易规则</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>强平规则</td><td>订单强平规则</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/FwY1wOlIJiTuHXktQy9lGXOVgie" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>挂单须知</td><td>挂单须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GAUqwjax5iUs1Dk0XMglSF3NgFd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>MT4/MT5 连接问题排查</td><td>MT4/MT5 APP 与 PC 版连接问题排查指南</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/RVzUw7hBOin8bikKLddl1LiJgjd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>交易账号归档规则</td><td>交易账号归档</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/CbPDw6DIvimrC6kIxm3lE2Ubgge" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">强平规则</td><td class="doc-col">订单强平规则</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/FwY1wOlIJiTuHXktQy9lGXOVgie" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">挂单须知</td><td class="doc-col">挂单须知</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GAUqwjax5iUs1Dk0XMglSF3NgFd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">MT4/MT5 连接问题排查</td><td class="doc-col">MT4/MT5 APP 与 PC 版连接问题排查指南</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/RVzUw7hBOin8bikKLddl1LiJgjd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">交易账号归档规则</td><td class="doc-col">交易账号归档</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/CbPDw6DIvimrC6kIxm3lE2Ubgge" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -712,24 +1036,24 @@
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>出入金总规则</td><td>出入金指南</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/JeVzw5TUeiBgDqkwZ3GldLkfgOf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>出入金 FAQ</td><td>出入金常见问题</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/KklOwv21biIMY0kwCwGloWv9gbc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">出入金总规则</td><td class="doc-col">出入金指南</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/JeVzw5TUeiBgDqkwZ3GldLkfgOf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">出入金 FAQ</td><td class="doc-col">出入金常见问题</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/KklOwv21biIMY0kwCwGloWv9gbc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">具体渠道</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>银联出入金流程</td><td>银联出入金流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/NIWUwK57diqJbxk8UeTl2cdQgB6" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>非银联出金流程</td><td>非银联出金流程图</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/XP2Iwc8MHiCxlNkCVKMlJyQggwd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>客户间内转规则</td><td>客户同名交易账号转账</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/R5Z2wbVUuibLxtkroLeluwMegxb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">银联出入金流程</td><td class="doc-col">银联出入金流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/NIWUwK57diqJbxk8UeTl2cdQgB6" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">非银联出金流程</td><td class="doc-col">非银联出金流程图</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/XP2Iwc8MHiCxlNkCVKMlJyQggwd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">客户间内转规则</td><td class="doc-col">客户同名交易账号转账</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/R5Z2wbVUuibLxtkroLeluwMegxb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">异常处理</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>异常警报处理流程</td><td>出入金异常警报处理流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/QS5TwLT7jiEucDkBIx4lJnMcgHc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">异常警报处理流程</td><td class="doc-col">出入金异常警报处理流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/QS5TwLT7jiEucDkBIx4lJnMcgHc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -750,28 +1074,28 @@
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>IB 申请须知</td><td>IB 申请须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/QHFIwdJltiLBpEkOLTelYPuagmf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>IB 申请流程（自动化）</td><td>IB 申请流程 (IB 自动化)</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/JuOjwBaSTi7C44kndNvlJCosg7g" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Sales 跟进 IB 申请指南</td><td>销售跟进 IB 申请需求流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/OIWgwksSJi6ihdkc6Nili8svgMb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">IB 申请须知</td><td class="doc-col">IB 申请须知</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/QHFIwdJltiLBpEkOLTelYPuagmf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">IB 申请流程（自动化）</td><td class="doc-col">IB 申请流程 (IB 自动化)</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/JuOjwBaSTi7C44kndNvlJCosg7g" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Sales 跟进 IB 申请指南</td><td class="doc-col">销售跟进 IB 申请需求流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/OIWgwksSJi6ihdkc6Nili8svgMb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">返佣计算</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>STP 加点 / ECN 加佣规则</td><td>STP 加点 / ECN 加佣</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZbDuwuOJsiSthRkVChVlNSYogMg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>STP 返点计算</td><td>STP 返点计算</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/KXxqwgRUjiL96kkGaMMlgpBvgdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>ECN 返佣计算</td><td>ECN 返佣计算</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/D1Nuw9Ttxiknvskm8qFlEyvwgyb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>TOC 公式逻辑</td><td>TOC 公式逻辑</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/YW7ewZVXmi71EKk84dEljoLvgsg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>IB 返佣文档使用 SOP</td><td>IB 返佣文档使用教程 SOP</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/SIiFwoDs1ibvOXkCBnVlIsUJgke" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">STP 加点 / ECN 加佣规则</td><td class="doc-col">STP 加点 / ECN 加佣</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZbDuwuOJsiSthRkVChVlNSYogMg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">STP 返点计算</td><td class="doc-col">STP 返点计算</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/KXxqwgRUjiL96kkGaMMlgpBvgdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">ECN 返佣计算</td><td class="doc-col">ECN 返佣计算</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/D1Nuw9Ttxiknvskm8qFlEyvwgyb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">TOC 公式逻辑</td><td class="doc-col">TOC 公式逻辑</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/YW7ewZVXmi71EKk84dEljoLvgsg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">IB 返佣文档使用 SOP</td><td class="doc-col">IB 返佣文档使用教程 SOP</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/SIiFwoDs1ibvOXkCBnVlIsUJgke" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">其他</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>IB 转账须知</td><td>IB 转账须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/YvVqwtccBi0MkbkQLdJlx3idgHb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>IB API 设置</td><td>IB API 设置</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/EWFMwX5YViZCRikbx5ClufpDgUb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">IB 转账须知</td><td class="doc-col">IB 转账须知</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/YvVqwtccBi0MkbkQLdJlx3idgHb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">IB API 设置</td><td class="doc-col">IB API 设置</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/EWFMwX5YViZCRikbx5ClufpDgUb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -792,19 +1116,19 @@
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>CPA 注册流程</td><td>CPA 注册流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/I2syw4EAWi4o31kwvCQlXDMlgff" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>CPA 禁开国家</td><td>CPA 禁开国（无法成为 CPA）</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/LnkEwcuiRixMtykOglwlWvQmgHh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Sub-CPA 注册流程</td><td>Sub-CPA 注册流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZhX1wadhvid2h0kBIvjlRAtzgCD" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Cellxpert 登录+常用功能</td><td>Cellxpert 登录+常用功能</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/IvvvwBFXcibFhjkmTFMlhPiKgmh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">CPA 注册流程</td><td class="doc-col">CPA 注册流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/I2syw4EAWi4o31kwvCQlXDMlgff" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">CPA 禁开国家</td><td class="doc-col">CPA 禁开国（无法成为 CPA）</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/LnkEwcuiRixMtykOglwlWvQmgHh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Sub-CPA 注册流程</td><td class="doc-col">Sub-CPA 注册流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZhX1wadhvid2h0kBIvjlRAtzgCD" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Cellxpert 登录+常用功能</td><td class="doc-col">Cellxpert 登录+常用功能</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/IvvvwBFXcibFhjkmTFMlhPiKgmh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">佣金与归属</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>CPA 归属变动流程</td><td>CPA/CPA 客户 归属变动申请流程 + 规则</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/SWPGwrBKWiPUI1k9INgly9AOgdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>CPA 佣金提款流程</td><td>CPA 佣金提款流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/TtwcwlB8BiWBv6kym9zljgKtgYd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>CPA 销售须知（CRM）</td><td>CRM（Admin Portal）CPA 销售须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/FLufwMlG1iSDDlk1G6ulbrPygKc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">CPA 归属变动流程</td><td class="doc-col">CPA/CPA 客户 归属变动申请流程 + 规则</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/SWPGwrBKWiPUI1k9INgly9AOgdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">CPA 佣金提款流程</td><td class="doc-col">CPA 佣金提款流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/TtwcwlB8BiWBv6kym9zljgKtgYd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">CPA 销售须知（CRM）</td><td class="doc-col">CRM（Admin Portal）CPA 销售须知</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/FLufwMlG1iSDDlk1G6ulbrPygKc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -825,32 +1149,32 @@
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>PAMM 概述与运作</td><td>PAMM 使用手册 + 须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/MFcmwwPpji8DgNkocmjlOGdQgOg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>PAMM Master 申请流程</td><td>PAMM Master 申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Mz6AwgdSeilAvvkQM09lZjTogJe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>PAMM Agent Commission 设置</td><td>PAMM Agent Commission 设置申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GNXtwAs0EimUG2kU5dfl2LSUgNb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">PAMM 概述与运作</td><td class="doc-col">PAMM 使用手册 + 须知</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/MFcmwwPpji8DgNkocmjlOGdQgOg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">PAMM Master 申请流程</td><td class="doc-col">PAMM Master 申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Mz6AwgdSeilAvvkQM09lZjTogJe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">PAMM Agent Commission 设置</td><td class="doc-col">PAMM Agent Commission 设置申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GNXtwAs0EimUG2kU5dfl2LSUgNb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">7B · UM Social（社交跟单）</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>如何成为 Provider + 设置 Offer</td><td>如何成为 Provider + 设置说明</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/MRoawTJCMiedzvkliGbl2yhTgxd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Provider 须知</td><td>Provider 须知</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/DREzw6kzWiqMVykhhSOlOCVTgkb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Follower 用户指南</td><td>如何成为 Follower + 设置说明</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/VobKwxuzpinV2ykbBwwloBiZgrc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>UM Social 评级计算逻辑</td><td>UM Social 评级 —— 计算逻辑</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/I700wgLa6iqkeuk9ZIvlpQV5gAh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>UM Social FAQ（Provider）</td><td>UM Social Provider 常见问题</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/K8sTwCHxMivW3ukfOkqlJWZBgLf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>UM Social FAQ（Follower）</td><td>社交跟单 Follower 常见问题</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Kis8wYJEEiE8oJk3QNqlQncXgrd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">如何成为 Provider + 设置 Offer</td><td class="doc-col">如何成为 Provider + 设置说明</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/MRoawTJCMiedzvkliGbl2yhTgxd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Provider 须知</td><td class="doc-col">Provider 须知</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/DREzw6kzWiqMVykhhSOlOCVTgkb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Follower 用户指南</td><td class="doc-col">如何成为 Follower + 设置说明</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/VobKwxuzpinV2ykbBwwloBiZgrc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">UM Social 评级计算逻辑</td><td class="doc-col">UM Social 评级 —— 计算逻辑</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/I700wgLa6iqkeuk9ZIvlpQV5gAh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">UM Social FAQ（Provider）</td><td class="doc-col">UM Social Provider 常见问题</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/K8sTwCHxMivW3ukfOkqlJWZBgLf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">UM Social FAQ（Follower）</td><td class="doc-col">社交跟单 Follower 常见问题</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Kis8wYJEEiE8oJk3QNqlQncXgrd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
       <div class="sub-header">7C · 专业跟单（Copy Trading Pro）</div>
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>影子账户申请流程</td><td>专业跟单交易 - 影子账户申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/YsD4w5NSZiOFN6kx2Mnl5pUBgkb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>Agent 设置申请</td><td>专业跟单交易 - Agent 设置申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/D4kUwD9QgiA2REknGQIl213ygrf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>0滑点申请</td><td>专业跟单交易 - 0滑点申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZzJJwdInkiWdKekZKSIlAaWjgvb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>跳船计划申请</td><td>专业跟单交易 - 跳船计划申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/BALAwEqYeiJAgLkhfCllywbVgee" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>异常排查流程</td><td>专业跟单交易 - 异常排查流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/BMl9wuwTriW8gBkPGyelzezCgBf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">影子账户申请流程</td><td class="doc-col">专业跟单交易 - 影子账户申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/YsD4w5NSZiOFN6kx2Mnl5pUBgkb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">Agent 设置申请</td><td class="doc-col">专业跟单交易 - Agent 设置申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/D4kUwD9QgiA2REknGQIl213ygrf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">0滑点申请</td><td class="doc-col">专业跟单交易 - 0滑点申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/ZzJJwdInkiWdKekZKSIlAaWjgvb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">跳船计划申请</td><td class="doc-col">专业跟单交易 - 跳船计划申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/BALAwEqYeiJAgLkhfCllywbVgee" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">异常排查流程</td><td class="doc-col">专业跟单交易 - 异常排查流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/BMl9wuwTriW8gBkPGyelzezCgBf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -870,11 +1194,11 @@
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>赠金活动规则详细</td><td>赠金活动明细</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/RAk8wtsU5ijvDUkqKCmlCO6PgCd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>手动下发赠金流程</td><td>手动下发赠金申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/MfyPwKggiiEl0zkIXz2l6JbLgEd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>赠金扣除逻辑（出金/内转）</td><td>出金+内转扣除赠金逻辑</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/TuQnwLEQqiOURMkArGBlqUd6gDg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>VPS 退款申请流程</td><td>VPS 退款申请流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/BbXow7fQlivS8Jkfm31l2rJMgSd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>赠金取消国家名单</td><td>取消入金赠金的国家列表</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/HjrJw99cPiUOkOkUCBElO5gWgvc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">赠金活动规则详细</td><td class="doc-col">赠金活动明细</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/RAk8wtsU5ijvDUkqKCmlCO6PgCd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">手动下发赠金流程</td><td class="doc-col">手动下发赠金申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/MfyPwKggiiEl0zkIXz2l6JbLgEd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">赠金扣除逻辑（出金/内转）</td><td class="doc-col">出金+内转扣除赠金逻辑</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/TuQnwLEQqiOURMkArGBlqUd6gDg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">VPS 退款申请流程</td><td class="doc-col">VPS 退款申请流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/BbXow7fQlivS8Jkfm31l2rJMgSd" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">赠金取消国家名单</td><td class="doc-col">取消入金赠金的国家列表</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/HjrJw99cPiUOkOkUCBElO5gWgvc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -894,36 +1218,81 @@
       <table>
         <thead><tr><th>主题</th><th>Lark 文件</th><th>链接</th></tr></thead>
         <tbody>
-          <tr><td>黑名单客户处理 SOP</td><td>黑名单客户排查处理流程 SOP</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/MmM6wLO0LiypnMkcQ10ljvnrg3g" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>销户流程</td><td>销户处理方式（Closed Account）</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/VVnrw3i4wiyXCDkzUkalTk7Kgsc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>客户身故出金/变更持有人</td><td>死亡客户出金流程</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GIjFwjsSiiyEj8kv9TolJ8a1gce" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>穿仓清零处理</td><td>穿仓清零</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Wtqzw1cIAiSnCtk4Qi7l26NggFe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>客户投诉处理流程</td><td>客户投诉销售/ IB</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Qtd1wl0KAi3Dyvkn8HWlKJCJgMW" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
-          <tr><td>税务发票政策</td><td>IB / CPA 业务不提供税务发票</td><td><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/WKoNwA5daiBIqgkxyImlE5yggdg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">黑名单客户处理 SOP</td><td class="doc-col">黑名单客户排查处理流程 SOP</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/MmM6wLO0LiypnMkcQ10ljvnrg3g" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">销户流程</td><td class="doc-col">销户处理方式（Closed Account）</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/VVnrw3i4wiyXCDkzUkalTk7Kgsc" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">客户身故出金/变更持有人</td><td class="doc-col">死亡客户出金流程</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/GIjFwjsSiiyEj8kv9TolJ8a1gce" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">穿仓清零处理</td><td class="doc-col">穿仓清零</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Wtqzw1cIAiSnCtk4Qi7l26NggFe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">客户投诉处理流程</td><td class="doc-col">客户投诉销售/ IB</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/Qtd1wl0KAi3Dyvkn8HWlKJCJgMW" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
+          <tr><td class="topic-col">税务发票政策</td><td class="doc-col">IB / CPA 业务不提供税务发票</td><td class="link-col"><a class="lark-link" href="https://hff6qb5z7p3.sg.larksuite.com/wiki/WKoNwA5daiBIqgkxyImlE5yggdg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开</a></td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
 
+
+<!-- ── EXTRA 补充知识 ── -->
+<div id="section-extra" class="section">
+  <div class="extra-progress-wrap">
+    <span class="extra-progress-badge" id="extra-badge">0 / 0 已读</span>
+    <div class="extra-prog-bar-wrap"><div class="extra-prog-bar" id="extra-prog-bar" style="width:0%"></div></div>
+  </div>
+  <div class="extra-layout">
+    <nav class="extra-nav" id="extra-nav"></nav>
+    <div class="extra-content">
+      <div class="md-body" id="extra-body"></div>
+    </div>
+  </div>
+</div>
 </div><!-- end .content -->
 
+<footer style="text-align:center;padding:16px 0 28px;font-size:0.72rem;color:var(--text-3);letter-spacing:0.04em;">
+  v2026-06-06 &nbsp;·&nbsp; new-knowledge
+</footer>
+
 <script>
+/* ── Dark mode ── */
+const DARK_KEY = 'leon_dark_mode';
+(function() {
+  if (localStorage.getItem(DARK_KEY) === '1') document.body.classList.add('dark');
+})();
+
+function initDarkToggle() {
+  const btn = document.getElementById('dark-toggle');
+  const sun = document.getElementById('icon-sun');
+  const moon = document.getElementById('icon-moon');
+  function syncIcons() {
+    const dark = document.body.classList.contains('dark');
+    sun.style.display  = dark ? '' : 'none';
+    moon.style.display = dark ? 'none' : '';
+  }
+  syncIcons();
+  btn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem(DARK_KEY, document.body.classList.contains('dark') ? '1' : '0');
+    syncIcons();
+  });
+}
+
+/* ── Scroll progress bar ── */
+function initScrollBar() {
+  const bar = document.getElementById('scroll-bar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }, { passive: true });
+}
+
 /* ── Progress tracking ── */
 const PROGRESS_KEY = 'onboarding_progress_v1';
-
-function loadProgress() {
-  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}'); }
-  catch { return {}; }
-}
-function saveProgress(state) {
-  localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
-}
+function loadProgress() { try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}'); } catch { return {}; } }
+function saveProgress(s) { localStorage.setItem(PROGRESS_KEY, JSON.stringify(s)); }
 
 const CHAPTERS = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'];
+const CH_LABELS = { ch1:'系统工具', ch2:'账户管理', ch3:'交易规则', ch4:'出入金', ch5:'IB', ch6:'CPA', ch7:'跟单', ch8:'促销赠金', ch9:'特殊情况' };
 
 const ICON_EMPTY = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/></svg>`;
-const ICON_DONE  = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6.5" fill="#DCFCE7" stroke="#16A34A"/><polyline points="5,8.5 7,10.5 11,6" stroke="#16A34A" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const ICON_DONE  = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6.5" fill="rgba(5,150,105,0.15)" stroke="currentColor"/><polyline points="5,8.5 7,10.5 11,6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 function makeDoneBtn(itemId, ch, isDone) {
   const btn = document.createElement('button');
@@ -941,33 +1310,26 @@ function makeDoneBtn(itemId, ch, isDone) {
     btn.closest('tr').classList.toggle('checked-row', nowDone);
     updateChapterProgress(ch);
     updateOverviewCard(ch);
+    updateGlobalProgress();
   });
   return btn;
 }
 
 function initProgress() {
   const state = loadProgress();
-
   CHAPTERS.forEach(ch => {
     const section = document.getElementById('section-' + ch);
     if (!section) return;
-
-    // Progress badge in chapter header
     const header = section.querySelector('.chapter-header');
     const badge = document.createElement('span');
     badge.className = 'ch-progress';
     badge.id = 'progress-' + ch;
     header.appendChild(badge);
 
-    // Inject done-btn column into each table
     const allRows = section.querySelectorAll('tbody tr');
     section.querySelectorAll('table').forEach(table => {
       const thead = table.querySelector('thead tr');
-      if (thead) {
-        const th = document.createElement('th');
-        th.className = 'check-th';
-        thead.insertBefore(th, thead.firstChild);
-      }
+      if (thead) { const th = document.createElement('th'); th.className = 'check-th'; thead.insertBefore(th, thead.firstChild); }
       table.querySelectorAll('tbody tr').forEach(row => {
         const rowIdx = [...allRows].indexOf(row);
         const itemId = ch + '-' + rowIdx;
@@ -979,14 +1341,11 @@ function initProgress() {
         row.insertBefore(td, row.firstChild);
       });
     });
-
     updateChapterProgress(ch);
   });
 
-  // Inject progress into overview cards
   document.querySelectorAll('.ov-card').forEach(card => {
-    const onclick = card.getAttribute('onclick') || '';
-    const m = onclick.match(/'(ch\d+)'/);
+    const m = (card.getAttribute('onclick') || '').match(/'(ch\d+)'/);
     if (!m) return;
     const ch = m[1];
     const wrap = document.createElement('div');
@@ -996,72 +1355,144 @@ function initProgress() {
     card.querySelector('.ov-text').appendChild(wrap);
     updateOverviewCard(ch);
   });
+  updateGlobalProgress();
 }
 
 function updateChapterProgress(ch) {
   const section = document.getElementById('section-' + ch);
   const btns = section.querySelectorAll('.done-btn');
-  const total = btns.length;
-  const done = [...btns].filter(b => b.classList.contains('done')).length;
+  const total = btns.length, done = [...btns].filter(b => b.classList.contains('done')).length;
   const badge = document.getElementById('progress-' + ch);
-  if (badge) {
-    badge.textContent = done + '/' + total;
-    badge.className = 'ch-progress' + (total > 0 && done === total ? ' complete' : '');
-  }
+  if (badge) { badge.textContent = done + '/' + total; badge.className = 'ch-progress' + (total > 0 && done === total ? ' complete' : ''); }
 }
 
 function updateOverviewCard(ch) {
   const wrap = document.getElementById('ov-progress-' + ch);
   if (!wrap) return;
-  const section = document.getElementById('section-' + ch);
-  const btns = section.querySelectorAll('.done-btn');
-  const total = btns.length;
-  const done = [...btns].filter(b => b.classList.contains('done')).length;
+  const btns = document.getElementById('section-' + ch).querySelectorAll('.done-btn');
+  const total = btns.length, done = [...btns].filter(b => b.classList.contains('done')).length;
   const pct = total > 0 ? (done / total * 100).toFixed(0) : 0;
   const full = total > 0 && done === total;
   wrap.querySelector('.ov-progress-bar').style.width = pct + '%';
-  wrap.querySelector('.ov-progress-bar').className = 'ov-progress-bar' + (full ? ' full' : '');
   const label = wrap.querySelector('.ov-progress-label');
   label.textContent = done + ' / ' + total + ' 已完成';
   label.className = 'ov-progress-label' + (full ? ' full' : '');
 }
 
-document.addEventListener('DOMContentLoaded', initProgress);
+function updateGlobalProgress() {
+  let totalAll = 0, doneAll = 0;
+  CHAPTERS.forEach(ch => {
+    const btns = document.getElementById('section-' + ch).querySelectorAll('.done-btn');
+    totalAll += btns.length;
+    doneAll += [...btns].filter(b => b.classList.contains('done')).length;
+  });
+  // Include extra docs
+  const extraState = loadExtraProgress();
+  totalAll += EXTRA_DOCS.length;
+  doneAll += EXTRA_DOCS.filter(d => extraState[d.id]).length;
+
+  const pct = totalAll > 0 ? Math.round(doneAll / totalAll * 100) : 0;
+  document.getElementById('gp-done').textContent = doneAll;
+  document.getElementById('gp-total').textContent = totalAll;
+  document.getElementById('gp-pct').textContent = pct + '%';
+  const bar = document.getElementById('gp-bar');
+  bar.style.width = pct + '%';
+}
+
+document.addEventListener('DOMContentLoaded', () => { initProgress(); initDarkToggle(); initScrollBar(); initSearch(); });
 
 /* ── Navigation ── */
+let _lastSection = 'overview';
 function showSection(id, tabEl) {
+  document.getElementById('search-input').value = '';
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
   document.getElementById('section-' + id).classList.add('active');
-
+  _lastSection = id;
   if (tabEl) {
     tabEl.classList.add('active');
     tabEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   } else {
     document.querySelectorAll('.tab').forEach(t => {
-      if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + id + "'")) {
+      if ((t.getAttribute('onclick') || '').includes("'" + id + "'")) {
         t.classList.add('active');
         t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
     });
   }
-
-  if (id === 'map' && !window._mindmapInited) {
-    window._mindmapInited = true;
-    initMarkmap();
-  }
+  if (id === 'map' && !window._mindmapInited) { window._mindmapInited = true; initMarkmap(); }
 }
 
-// Keyboard navigation for tabs and cards
 document.querySelectorAll('.tab, .ov-card').forEach(el => {
-  el.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      el.click();
-    }
-  });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
 });
+
+/* ── Search ── */
+function highlight(text, query) {
+  if (!query) return text;
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx < 0) return text;
+  return text.slice(0, idx) + '<mark>' + text.slice(idx, idx + query.length) + '</mark>' + text.slice(idx + query.length);
+}
+
+function initSearch() {
+  const input = document.getElementById('search-input');
+  const icon = input.previousElementSibling;
+
+  function expand() { input.classList.add('expanded'); input.focus(); }
+  function collapse() { if (!input.value) input.classList.remove('expanded'); }
+
+  if (icon) icon.addEventListener('click', expand);
+  input.addEventListener('blur', collapse);
+  input.addEventListener('input', () => {
+    const q = input.value.trim();
+    if (!q) { showSection(_lastSection, null); return; }
+    runSearch(q);
+  });
+}
+
+function runSearch(q) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-search').classList.add('active');
+
+  const body = document.getElementById('search-results-body');
+  body.innerHTML = '';
+  let total = 0;
+
+  CHAPTERS.forEach(ch => {
+    const section = document.getElementById('section-' + ch);
+    const matches = [];
+    section.querySelectorAll('tbody tr').forEach(row => {
+      const cells = row.querySelectorAll('td');
+      const nameCell = cells[1]; // after check-td is inserted, original td:first is now index 1
+      const linkCell = cells[cells.length - 1];
+      const nameTxt = nameCell ? nameCell.textContent.trim() : '';
+      if (nameTxt.toLowerCase().includes(q.toLowerCase())) {
+        const link = linkCell ? linkCell.querySelector('a') : null;
+        matches.push({ name: nameTxt, href: link ? link.href : '#' });
+      }
+    });
+    if (matches.length === 0) return;
+    total += matches.length;
+    const group = document.createElement('div');
+    group.className = 'search-group';
+    group.innerHTML = `<div class="search-group-title">Ch${ch.replace('ch','')} · ${CH_LABELS[ch]}</div>`;
+    matches.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'search-result-row';
+      row.innerHTML = `<div><div class="search-result-name">${highlight(m.name, q)}</div></div>
+        <a class="lark-link" href="${m.href}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>打开
+        </a>`;
+      group.appendChild(row);
+    });
+    body.appendChild(group);
+  });
+
+  document.getElementById('search-count').textContent = total + ' 条';
+  if (total === 0) body.innerHTML = `<div class="search-empty">未找到"${q}"相关内容</div>`;
+}
 
 function initMarkmap() {
   const container = document.getElementById('markmap-container');
@@ -1080,6 +1511,7 @@ function initMarkmap() {
       { title: '第七章\n跟单',      color: '#6366F1', subs: ['PAMM', 'UM Social', '跟单 Pro'] },
       { title: '第八章\n促销赠金',  color: '#F97316', subs: ['赠金规则', '操作流程'] },
       { title: '第九章\n特殊情况',  color: '#EF4444', subs: ['黑名单', '销户流程', '其他'] },
+      { title: '补充知识\nCFD',     color: '#8B5CF6', subs: ['CFD 基础', 'CFD 进阶'] },
     ]
   };
 
@@ -1190,6 +1622,208 @@ function initMarkmap() {
   }, 50);
 
 }
+
+/* ── 补充知识 ── */
+const EXTRA_DOCS = [{"id": "CFD基础-什么是CFD", "group": "CFD 基础", "title": "什么是CFD", "content": "# CFD 基础：什么是差价合约（CFD）\n\n> 🎯 **新人导读**：理解 CFD 的本质是做好客服支持的基础——客户问「为什么我买入了但账户显示亏损」就需要用到这里的知识。\n\n## 定义\n\n**差价合约（Contract for Difference，CFD）** 是买卖双方之间的一种金融衍生品合约，约定在合约开立和平仓之间，交换标的资产价格变动所产生的差额。\n\n- 交易者**不持有**标的资产本身（股票、商品、指数等）\n- 盈亏来自**价格差**：买入价与卖出价之间的差值 × 合约数量\n- 可以做多（预期价格上涨）或做空（预期价格下跌）\n\n## CFD 与现货交易的区别\n\n| 维度 | CFD | 现货交易 |\n|------|-----|---------|\n| 是否持有资产 | 否（仅持有合约） | 是 |\n| 是否可做空 | 是 | 通常需借券 |\n| 杠杆 | 内置杠杆，仅需缴保证金 | 通常全额支付 |\n| 隔夜持仓成本 | 有 Swap（隔夜费） | 无（股票有股息） |\n| 监管归属 | 金融衍生品监管 | 证券/商品监管 |\n| 股东权利 | 无投票权，但通常有股息调整 | 有完整股东权利 |\n\n## 可交易的 CFD 品种\n\n- **外汇（Forex）**：EUR/USD、GBP/USD 等货币对\n- **股指（Indices）**：S&P 500、道琼斯、恒生指数等\n- **商品（Commodities）**：原油（WTI/Brent）、黄金、白银等\n- **个股（Shares）**：苹果、谷歌、特斯拉等上市公司股票\n- **加密货币（Crypto）**：比特币、以太坊等（部分平台提供）\n\n## 盈亏计算公式\n\n```\n盈亏 = （平仓价 - 开仓价）× 合约数量 × 合约大小\n```\n\n**做多示例**：\n- 以 1.1000 买入 1 手 EUR/USD（合约大小 100,000），以 1.1050 平仓\n- 盈利 = (1.1050 - 1.1000) × 1 × 100,000 = $500\n\n**做空示例**：\n- 以 1.1050 卖出 1 手 EUR/USD，以 1.1000 平仓\n- 盈利 = (1.1050 - 1.1000) × 1 × 100,000 = $500\n\n## 监管框架\n\nCFD 在不同监管辖区的监管力度不同：\n\n| 地区 | 监管机构 | 主要限制 |\n|------|---------|---------|\n| 欧盟 | ESMA | 零售客户杠杆上限（外汇最高 1:30），禁止赠金 |\n| 英国 | FCA | 同 ESMA 标准，另有亏损保护要求 |\n| 澳大利亚 | ASIC | 外汇最高 1:30，禁止赠金 |\n| 塞浦路斯 | CySEC | EU 成员，遵循 ESMA |\n| 圣文森特/瓦努阿图等 | 离岸监管 | 限制较少，杠杆可更高 |\n\n> ⚠️ **重要**：CFD 是高风险产品，ESMA 数据显示约 74-89% 的零售 CFD 投资者亏损。\n"}, {"id": "CFD基础-订单类型", "group": "CFD 基础", "title": "订单类型", "content": "# CFD 基础：订单类型\n\n> 🎯 **新人导读**：客户操作中最常遇到的问题是「挂单没成交」或「止损触发了但成交价不对」，这里解释各类订单的执行逻辑。\n\n## 市价单（Market Order）\n\n**定义**：以当前市场最优价格**立即执行**的订单。\n\n- 优点：保证成交\n- 缺点：在波动性高时可能出现**滑点（Slippage）**，实际成交价与预期价格有偏差\n- 适用：对价格不敏感、需要立即进场的场景\n\n## 限价单（Limit Order）\n\n**定义**：以**指定价格或更优价格**执行的订单，价格不达标则不成交。\n\n| 方向 | 类型 | 触发条件 |\n|------|------|---------|\n| 做多 | Buy Limit | 市价下跌至指定价格时买入（低买） |\n| 做空 | Sell Limit | 市价上涨至指定价格时卖出（高卖） |\n\n- 优点：保证成交价不差于指定价\n- 缺点：若价格未到达，订单不成交（可能错过行情）\n- 适用：等待回调入场，精准控制成本\n\n## 止损单（Stop Order）\n\n**定义**：当市价到达指定价格时，以**市价单**执行的订单。常用于追突破行情或设置止损保护。\n\n| 方向 | 类型 | 触发条件 |\n|------|------|---------|\n| 做多 | Buy Stop | 市价上涨至指定价格时买入（追涨突破） |\n| 做空 | Sell Stop | 市价下跌至指定价格时卖出（追跌突破） |\n\n- 优点：可追突破行情，也可作为保护性止损\n- 缺点：触发后以市价执行，可能有滑点\n- 最常见用法：**止损单（Stop Loss）** — 在持仓方向反向设置，控制最大亏损\n\n## 限价止损单（Stop-Limit Order）\n\n**定义**：结合止损单和限价单，先由止损价触发，再以**限价**执行，不接受超出限价范围的成交。\n\n- 优点：避免在极端行情下以极差价格成交\n- 缺点：若市价跳过限价范围，**订单可能不成交**（保护失效）\n- 适用：希望控制最差成交价，但接受可能不成交的风险\n\n## 移动止损（Trailing Stop）\n\n**定义**：止损价格随持仓盈利方向**自动跟随移动**，锁定浮动盈利，同时在行情反转时触发止损。\n\n**运作方式**：\n- 设定追踪距离（如 30 pips）\n- 做多时：市价每上涨 1 pip，止损价上移 1 pip\n- 做多时：市价下跌时，止损价**不移动**，直至触发\n\n**示例**：\n- 以 1.1000 买入，设移动止损 50 pips → 初始止损 1.0950\n- 市价涨至 1.1100 → 止损自动移至 1.1050\n- 市价随后跌至 1.1050 → 止损触发，锁定 50 pips 盈利\n\n> ⚠️ 移动止损通常在客户端执行（非服务器端），断网时可能失效。\n\n## 止盈单（Take Profit）\n\n**定义**：当持仓达到目标盈利价格时**自动平仓**。\n\n- 通常与开仓单同时设置\n- 服务器端执行，比客户端更可靠\n- 触发后以市价平仓（可能有小幅滑点）\n\n## 订单有效期\n\n| 有效期类型 | 说明 |\n|----------|------|\n| **GTC（Good Till Cancelled）** | 手动取消前一直有效 |\n| **GTD（Good Till Date）** | 到指定日期自动取消 |\n| **IOC（Immediate or Cancel）** | 立即执行可成交部分，剩余取消 |\n| **FOK（Fill or Kill）** | 全部成交或全部取消，不接受部分成交 |\n| **Day（当日有效）** | 当天收盘未成交则取消 |\n"}, {"id": "CFD基础-杠杆与保证金", "group": "CFD 基础", "title": "杠杆与保证金", "content": "# CFD 基础：杠杆与保证金\n\n> 🎯 **新人导读**：杠杆和保证金是客户最常问的话题，也是强平的直接原因，务必熟悉 Margin Call 和 Stop Out 的触发条件。\n\n## 杠杆（Leverage）\n\n杠杆允许交易者用少量资金控制更大规模的头寸。\n\n**杠杆表示方式**：\n- 比例式：1:100（即 1 份保证金控制 100 份头寸）\n- 百分比式：1%（即 1% 保证金率，等同于 1:100 杠杆）\n\n**公式**：\n```\n杠杆 = 头寸总价值 / 所需保证金\n```\n\n**示例**：\n- 交易 1 手 EUR/USD（$100,000）\n- 杠杆 1:100 → 所需保证金 = $100,000 / 100 = **$1,000**\n- 杠杆 1:30 → 所需保证金 = $100,000 / 30 = **$3,333**\n\n## 保证金（Margin）\n\n### 什么是保证金\n\n保证金是开仓时必须在账户中持有的**最低资金**，作为潜在亏损的担保。保证金不是费用，而是临时冻结的资金。\n\n### 保证金类型\n\n| 类型 | 说明 |\n|------|------|\n| **已用保证金（Used Margin）** | 当前所有持仓已占用的保证金总额 |\n| **可用保证金（Free Margin）** | 账户净值 - 已用保证金，可用于开新仓 |\n| **账户净值（Equity）** | 账户余额 + 当前浮动盈亏 |\n| **保证金水平（Margin Level）** | Equity / Used Margin × 100%，反映账户健康程度 |\n\n### 保证金计算公式\n\n```\n所需保证金 = 头寸名义价值 / 杠杆倍数\n头寸名义价值 = 手数 × 合约大小 × 当前价格\n```\n\n**外汇示例**（1 手 GBP/USD，杠杆 1:100，当前价 1.2500）：\n```\n名义价值 = 1 × 100,000 × 1.2500 = $125,000\n所需保证金 = $125,000 / 100 = $1,250\n```\n\n## 保证金追加（Margin Call）\n\n当账户净值下降，保证金水平跌至预设阈值时，券商会发出 **Margin Call**（保证金追加通知）。\n\n- **含义**：账户资金不足以维持当前持仓\n- **触发条件**：保证金水平跌至券商设定的 Margin Call 水平（如 100%）\n- **处理方式**：追加资金，或主动减仓降低已用保证金\n\n## 强平（Stop Out）\n\n若账户继续亏损，保证金水平继续下跌，到达 **Stop Out 水平**时，券商系统将**自动平仓**，从亏损最大的持仓开始，直到保证金水平回到安全区间。\n\n| 参数 | 说明 |\n|------|------|\n| Margin Call 水平 | 发出警告的保证金水平（如 100%） |\n| Stop Out 水平 | 触发自动平仓的保证金水平（如 50%） |\n\n**强平流程**：\n1. 系统检测到保证金水平 ≤ Stop Out 水平\n2. 自动平掉亏损最大的持仓\n3. 平仓后重新计算保证金水平\n4. 若仍低于 Stop Out → 继续平仓，直到恢复\n\n> ⚠️ **重要**：强平不保证按止损价成交，极端行情下可能发生**负余额**（账户亏损超过存款）。正规券商通常提供**负余额保护**政策。\n\n## 杠杆与风险的关系\n\n杠杆是双刃剑：\n\n| 杠杆 | 价格变动 1% | 保证金回报率 | 保证金亏损率 |\n|------|------------|------------|------------|\n| 1:10 | 盈利 10% | | |\n| 1:50 | 盈利 50% | | |\n| 1:100 | 盈利 100% | 全额亏损 | |\n\n**监管规定的零售杠杆上限（ESMA/FCA/ASIC）**：\n- 主要货币对：1:30\n- 非主要货币对：1:20\n- 主要股指：1:20\n- 黄金：1:20\n- 个股 CFD：1:5\n\n> 专业客户（Professional Client）可申请更高杠杆，但需满足相关条件。\n"}, {"id": "CFD基础-点差与手续费", "group": "CFD 基础", "title": "点差与手续费", "content": "# CFD 基础：点差与手续费\n\n> 🎯 **新人导读**：点差是 STP 账户的主要成本，手续费是 ECN 账户的主要成本，理解这个区别才能向客户解释为何两种账户的费用结构不同。\n\n## 点差（Spread）\n\n### 定义\n\n**点差**是买价（Ask）与卖价（Bid）之间的差值，是 CFD 交易最主要的交易成本之一。\n\n```\n点差 = Ask（买入价）- Bid（卖出价）\n```\n\n开仓时立即产生的**隐性成本**：做多按 Ask 价买入，做空按 Bid 价卖出，平仓时方向相反，点差是每次交易必然亏损的起始成本。\n\n### 点（Pip）与点差单位\n\n| 品种 | 1 Pip = | 示例 |\n|------|---------|------|\n| 外汇主要货币对 | 0.0001（第 4 位小数） | EUR/USD：1.1000 → 1.1001 差 1 pip |\n| 日元货币对 | 0.01（第 2 位小数） | USD/JPY：145.00 → 145.01 差 1 pip |\n| 黄金（XAU/USD） | 0.01 | $1900.00 → $1900.01 差 1 pip |\n| 指数 | 通常为 1 个指数点 | |\n\n### 固定点差 vs 浮动点差\n\n| 类型 | 特点 | 适用场景 |\n|------|------|---------|\n| **固定点差** | 不随市场波动变化，始终固定 | 新闻时段、低流动性时段可控 |\n| **浮动点差（Variable）** | 随市场流动性变化，正常时段较窄 | 正常市场更低成本，但极端行情大幅扩大 |\n| **最低点差（Raw/ECN）** | 接近银行间点差（可低至 0），另收佣金 | 高频交易者，需配合佣金账户 |\n\n### 点差对盈亏的影响\n\n**外汇示例**：\n- EUR/USD 点差 2 pips，1 手（100,000）\n- 每 pip 价值 = $10\n- 点差成本 = 2 × $10 = $20（开仓即亏 $20）\n\n## 佣金（Commission）\n\n### 何时收取佣金\n\n**STP / ECN / Raw Spread 账户**通常：\n- 点差极低（接近 0 或为 0）\n- 另外按**手数**或**名义价值**收取固定佣金\n\n**标准账户（Standard Account）**通常：\n- 点差已包含利润，**不额外收取佣金**\n- 点差通常高于 ECN 账户\n\n### 佣金计算方式\n\n常见计算方式（以外汇为例）：\n\n| 计算方式 | 示例 |\n|---------|------|\n| 每手固定金额 | $7/手（往返 $14） |\n| 名义价值百分比 | 0.005%（1 手 $100,000 = $5 单边） |\n| 每百万名义价值 | $50/百万（1 手外汇约 $5） |\n\n## 实际交易总成本\n\n```\n总成本 = 点差成本 + 佣金（若有）+ Swap（持仓过夜）\n```\n\n**对比示例**（1 手 EUR/USD，价格 1.1000）：\n\n| 账户类型 | 点差 | 佣金（单边） | 单次往返总成本 |\n|---------|------|------------|--------------|\n| 标准账户 | 1.5 pips = $15 | $0 | $15 |\n| ECN 账户 | 0.2 pips = $2 | $3.5 | $9（$2 + $3.5×2） |\n\n## 点差扩大（Spread Widening）\n\n以下情况点差会大幅扩大：\n- **重大经济数据发布**（非农、CPI、央行利率决议）\n- **市场开盘/收盘**（流动性低谷）\n- **低流动性时段**（亚洲早盘、节假日）\n- **黑天鹅事件**（Flash Crash、地缘政治冲击）\n\n> ⚠️ 止损单在点差扩大时可能以不利价格成交（滑点）。\n"}, {"id": "CFD基础-掉期与隔夜费", "group": "CFD 基础", "title": "掉期与隔夜费", "content": "# CFD 基础：掉期与隔夜费（Swap）\n\n> 🎯 **新人导读**：Swap 是客户持仓过夜时自动扣取的费用，也是 Swap Free 账户申请的背景知识——客户问「为什么账户多扣了钱」时需要解释。\n\n## 什么是 Swap（隔夜费）\n\n当 CFD 持仓**过夜**（即跨越纽约时间 17:00，通常为 GMT 22:00）未平仓时，券商会收取或支付**隔夜资金利息**，称为 **Swap**（掉期费）或 **Rollover Fee**（展期费）。\n\nSwap 的本质是对**借入资金成本**或**收益**的反映：\n- 用杠杆做多某货币 → 相当于借钱买入，需支付利息\n- 做空某货币 → 相当于出借资产，可能获得利息\n\n## 外汇 Swap 的计算原理\n\n外汇 CFD 的 Swap 基于两种货币的**隔夜利率差**（Interest Rate Differential）：\n\n```\nSwap = 名义价值 × (基础货币利率 - 报价货币利率) / 360 × 方向系数\n```\n\n- **做多**：支付基础货币利率，收取报价货币利率（净额可正可负）\n- **做空**：收取基础货币利率，支付报价货币利率（净额可正可负）\n\n**注意**：实际 Swap 数值由券商报价，包含**点差溢价**（markup），不完全等于银行间利率。\n\n## Swap 的实际影响\n\n| 情况 | 结果 |\n|------|------|\n| Swap 为负值 | 从账户扣除（最常见） |\n| Swap 为正值 | 存入账户（如做空高利率货币） |\n| 周三换仓 | 通常计 3 天 Swap（补偿周末 2 天） |\n\n**三重 Swap 日（Triple Swap Day）**：\n- 通常为周三（因结算惯例，周三持仓对应周五结算，再往后 2 天为周末）\n- 周三过夜持仓会被收取 3 天的 Swap 费用\n\n## 非外汇 CFD 的 Swap\n\n| 品种 | 计算基准 |\n|------|---------|\n| 股指 CFD | 基准利率（如 SOFR、LIBOR 替代利率）+ 券商溢价 |\n| 个股 CFD | 基准利率 ± 股息调整 |\n| 大宗商品 CFD | 各品种独立定价，通常为固定点数 |\n| 加密货币 CFD | 通常较高，基于借贷市场利率 |\n\n## 免息账户（Islamic / Swap-Free Account）\n\n为满足伊斯兰教法（Sharia）对禁止利息（Riba）的要求，部分券商提供**伊斯兰账户**（Islamic Account），特点：\n\n- 持仓过夜**不收取 Swap**\n- 通常以**管理费**（Administration Fee）或**更宽点差**替代\n- 可能限制持仓时长（超过一定天数后开始收费）\n- 需要申请，部分券商要求提供伊斯兰信仰证明\n\n> ⚠️ **风险**：部分平台将 Swap-Free 账户作为营销工具，以更宽点差或隐性费用弥补，需注意实际成本。\n\n## 如何查看 Swap 数值\n\n- 交易平台（MT4/MT5）：右键品种 → 查看规格（Specification）→ Swap Long / Swap Short\n- 单位通常为：点数（Points）或百分比（% p.a.）\n"}, {"id": "CFD基础-交易时间", "group": "CFD 基础", "title": "交易时间", "content": "# CFD 基础：交易时间\n\n> 🎯 **新人导读**：周末/节假日客户无法下单是常见问题，这里说明各市场的开市时间，出入金异常期也常与市场休市叠加。\n\n## 外汇市场（Forex）\n\n外汇市场全球 24 小时运转（周一至周五），由四大交易时段接力：\n\n| 交易时段 | UTC 时间 | 北京时间（UTC+8） | 主要货币对 |\n|---------|---------|----------------|---------|\n| **悉尼** | 22:00–07:00 | 06:00–15:00 | AUD、NZD |\n| **东京** | 00:00–09:00 | 08:00–17:00 | JPY、AUD |\n| **伦敦** | 07:00–16:00 | 15:00–00:00 | EUR、GBP、CHF |\n| **纽约** | 12:00–21:00 | 20:00–05:00 | USD、CAD |\n\n**流动性最强时段**：\n- 伦敦 + 纽约重叠时段（UTC 12:00–16:00 / 北京时间 20:00–00:00）\n- 伦敦开盘前后（UTC 07:00–09:00）\n\n**外汇市场关闭时间**：\n- 每周五 UTC 21:00（北京时间周六 05:00）关市\n- 每周日 UTC 21:00（北京时间周一 05:00）开市\n- 周末持仓收取三日 Swap（通常在周三计算）\n\n## 股指 CFD\n\n| 指数 | 交易所 | 交易时间（当地时间） | UTC |\n|------|--------|-------------------|-----|\n| S&P 500（US500） | CME | 08:30–15:00（美东） | 13:30–20:00 |\n| 道琼斯（US30） | CME | 08:30–15:00（美东） | 13:30–20:00 |\n| 纳斯达克（USTECH） | CME | 08:30–15:00（美东） | 13:30–20:00 |\n| FTSE 100（UK100） | LSE | 08:00–16:30（英国） | 08:00–16:30 |\n| DAX 40（GER40） | Xetra | 09:00–17:30（德国） | 08:00–16:30 |\n| 日经 225（JP225） | OSE | 09:00–15:30（日本） | 00:00–06:30 |\n| 恒生（HK50） | HKEX | 09:30–16:00（香港） | 01:30–08:00 |\n\n> ⚠️ CFD 券商通常提供**延长交易时间**（包含盘前盘后），与现货交易所时间可能不同，以券商平台为准。\n\n## 黄金与白银\n\n| 品种 | 主要交易时间（UTC） | 北京时间 | 说明 |\n|------|------------------|---------|------|\n| 黄金（XAU/USD） | 周一 00:00–周五 21:00 | 几乎全天 | 跟随外汇市场节奏 |\n| 白银（XAG/USD） | 同上 | 同上 | 同上 |\n\n**黄金流动性高峰**：\n- 伦敦定盘价（10:30 AM 和 3:00 PM 伦敦时间）\n- 美国经济数据发布时段\n\n## 原油 CFD\n\n| 品种 | 主要交易所 | 交易时间（UTC） |\n|------|----------|--------------|\n| WTI 原油（USOil） | NYMEX | 00:00–21:00（含短暂休市） |\n| 布伦特原油（UKOil） | ICE | 00:00–21:00 |\n\n## 个股 CFD\n\n个股 CFD 交易时间通常与对应**证券交易所**时间一致：\n\n| 市场 | 交易时间（当地） | UTC |\n|------|--------------|-----|\n| 美股（NYSE/NASDAQ） | 09:30–16:00（美东） | 14:30–21:00 |\n| 港股 | 09:30–16:00（香港） | 01:30–08:00 |\n| 英股 | 08:00–16:30（英国） | 08:00–16:30 |\n\n## 重要提示\n\n1. **节假日**：各国法定节假日期间对应市场关闭或流动性极低，点差可能大幅扩大\n2. **夏令时**：美国和欧洲夏令时（3-11月）期间，部分时间段会偏移 1 小时\n3. **跳空风险**：周末关市后周一开市可能出现价格跳空（Gap），与周五收盘价差异较大\n4. **北京时间参考**：以上北京时间均基于 UTC+8，不考虑夏令时\n"}, {"id": "CFD基础-风险管理", "group": "CFD 基础", "title": "风险管理", "content": "# CFD 基础：风险管理\n\n> 🎯 **新人导读**：这是向客户科普风控意识的背景知识，也涉及负余额保护政策（UM 的穿仓清零规则与此相关）。\n\n## 止损（Stop Loss）\n\n**定义**：预先设定的平仓价格，当持仓亏损达到该价格时自动平仓，防止亏损继续扩大。\n\n**类型**：\n\n| 类型 | 说明 | 特点 |\n|------|------|------|\n| 普通止损（Standard SL） | 触发后以市价执行 | 极端行情下可能滑点 |\n| 保证止损（Guaranteed SL） | 保证以设定价格成交 | 通常额外收费，但无滑点风险 |\n| 移动止损（Trailing SL） | 随盈利方向自动移动 | 锁定盈利，见[[CFD基础-订单类型]] |\n\n**设置止损的原则**：\n- 止损应设在技术上有意义的位置（支撑/阻力位之外），而非随意百分比\n- 避免止损过近（容易被市场噪音触发）或过远（亏损过大）\n\n## 止盈（Take Profit）\n\n**定义**：预先设定的平仓价格，当持仓盈利达到该价格时自动平仓，锁定利润。\n\n**注意**：设置止盈不是必须的，可以手动观察平仓；但预设止盈有助于避免贪婪情绪干扰决策。\n\n## 风险回报比（Risk-Reward Ratio）\n\n```\n风险回报比 = 止盈点数 / 止损点数\n```\n\n**示例**：\n- 止损 50 pips，止盈 100 pips → 风险回报比 1:2\n- 即使胜率只有 40%，长期期望值仍为正：0.4 × 100 - 0.6 × 50 = +10 pips\n\n**行业惯例**：建议风险回报比至少为 1:1.5 或 1:2，即盈利目标至少为潜在亏损的 1.5–2 倍。\n\n## 仓位管理（Position Sizing）\n\n**核心原则**：每笔交易的风险金额不超过账户总值的一定比例（通常 1%–2%）。\n\n**计算公式**：\n```\n手数 = (账户总值 × 风险比例) / (止损点数 × 每点价值)\n```\n\n**示例**：\n- 账户 $10,000，风险 1%（即 $100）\n- EUR/USD 止损 50 pips，每 pip = $10/手\n- 手数 = $100 / (50 × $10) = **0.2 手**\n\n## 分散化原则\n\n- 避免将资金集中在单一品种或高度相关的品种\n- 外汇中 EUR/USD 与 GBP/USD 高度正相关，同时重仓等于双倍风险\n- 适当分散至不同资产类别（外汇、商品、指数）\n\n## 杠杆控制\n\n- 高杠杆虽然放大收益，也同等放大亏损\n- 建议新手实际使用的有效杠杆（净头寸 / 账户净值）不超过 5–10 倍\n- 即使平台提供 1:500，也不意味着应该全额使用\n\n## 负余额保护（Negative Balance Protection）\n\n部分监管辖区（EU/FCA）要求零售客户享有**负余额保护**：即强平后账户余额不会变为负数，亏损上限为账户存款。\n\n## 常见风险管理错误\n\n| 错误 | 后果 |\n|------|------|\n| 不设止损 | 单笔亏损可能毁掉大部分账户 |\n| 频繁移动止损 | 失去风险控制意义 |\n| 亏损加仓（Martingale） | 短期可能回本，极端行情下爆仓 |\n| 情绪化操作（追涨杀跌） | 系统性亏损 |\n| 过度杠杆 | 小波动即触发强平 |\n"}, {"id": "CFD基础-MT4MT5合约规格字段", "group": "CFD 基础", "title": "MT4MT5合约规格字段", "content": "# MT4/MT5 Symbol 规格字段说明\n\n> 🎯 **新人导读**：查看客户合约规格表（wiki 里的月度合约规格）时，这里解释每个字段的含义，也是 IB 返佣计算中「点值」的来源。\n\n## 如何查看 Symbol 规格\n\n- **MT4**：在 Market Watch 右键点击品种 → 「Specification（属性）」\n- **MT5**：在 Market Watch 右键点击品种 → 「Specification」，或菜单栏 View → Symbols → 选中品种 → Properties\n\n---\n\n## 字段详解\n\n### 一、价格与精度\n\n| 字段 | 英文名 | 说明 |\n|------|--------|------|\n| **小数位数** | Digits | 报价的小数点后位数。外汇主流对通常为 5 位（如 1.08524），日元对为 3 位（如 151.234），黄金通常为 2 位。 |\n| **点（Point）** | Point | 报价的最小变动单位 = `10^(-Digits)`。5 位报价的 point = 0.00001。**注意：Point ≠ Pip。** 1 Pip = 10 Points（5位报价品种）。 |\n| **Tick Size** | Tick Size | 价格实际可变动的最小步长（单位：点）。大多数外汇品种 Tick Size = Point，但某些指数品种 Tick Size 可能更大（如 SP500 的 Tick Size = 0.1）。 |\n\n---\n\n### 二、合约与交易量\n\n| 字段 | 英文名 | 说明 |\n|------|--------|------|\n| **合约大小** | Contract Size | 1 手（1 lot）代表的标的资产数量。外汇标准：100,000 单位基础货币；黄金（XAUUSD）：100 盎司；原油（USOIL）：1,000 桶；股指：通常 1 点。 |\n| **最小手数** | Min Volume | 单笔订单允许的最小交易量（手数）。常见为 0.01 手。 |\n| **最大手数** | Max Volume | 单笔订单允许的最大交易量（手数）。 |\n| **手数步长** | Volume Step | 下单量的最小递增单位，通常为 0.01 手（即不能下 0.015 手，只能下 0.01 或 0.02）。 |\n\n---\n\n### 三、点值（Tick Value）\n\n| 字段 | 英文名 | 说明 |\n|------|--------|------|\n| **盈利 Tick 值** | Tick Value (Profit) | 价格朝有利方向变动 1 个 Tick 时，1 手头寸的盈亏金额（账户货币计）。这是计算实际盈亏和返佣的核心参数。 |\n| **亏损 Tick 值** | Tick Value (Loss) | 价格朝不利方向变动 1 个 Tick 时的盈亏。大多数品种与盈利 Tick 值相同；某些期货品种可能不同。 |\n\n> **关系公式**：`盈亏 = 手数 × 价格变动（点数）÷ Tick Size × Tick Value`\n>\n> **简化版（Tick Size = Point 时）**：`盈亏 = 手数 × 价格变动（点数） × (Tick Value ÷ Tick Size)`\n\n**举例（EURUSD，账户 USD）**：\n- Contract Size = 100,000；Tick Size = 0.00001；Tick Value = 1 USD\n- 买入 1 手，价格上涨 10 pips（= 100 points）\n- 盈利 = 1 × 100 × (1 ÷ 0.00001) × 0.00001 = 1 × 100 × 1 = **100 USD**\n\n**举例（USDJPY，账户 USD，汇率 150）**：\n- Contract Size = 100,000 JPY；Tick Value ≈ 0.00667 USD（= 1 JPY ÷ 150）\n- 买入 1 手，价格上涨 10 pips（= 100 points，因 3 位小数）\n- 盈利 = 1 × 100 × (0.00667 ÷ 0.001) = 1 × 100 × 6.67 ≈ **667 USD**\n\n---\n\n### 四、点差（Spread）\n\n| 字段 | 英文名 | 说明 |\n|------|--------|------|\n| **点差** | Spread | Bid 价与 Ask 价之差，单位为 Points（最小点）。浮动点差（Float Spread）会随市场流动性变化。 |\n| **是否浮动点差** | Spread Float | 标记该品种是否为浮动点差。STP/ECN 账户通常为浮动点差；固定点差账户此项为 false。 |\n\n> **换算**：合约规格表中「浮动点差」列的数值单位为 Points（最小点），计算时须乘以 Tick Value。\n\n---\n\n### 五、保证金（Margin）\n\n| 字段 | 英文名 | 说明 |\n|------|--------|------|\n| **初始保证金** | Initial Margin | 开仓 1 手所需的初始保证金（账户货币）。若为 0 表示采用杠杆模式计算（见下）。 |\n| **维持保证金** | Maintenance Margin | 维持持仓所需的最低保证金；低于此值触发 Margin Call。通常 = 初始保证金 × 50%（各经纪商不同）。 |\n| **对冲保证金** | Hedged Margin | 对冲仓位（同品种反向持仓）所需的保证金，通常低于单向持仓的保证金。 |\n| **保证金计算模式** | Margin Mode | Forex 模式：`保证金 = 手数 × Contract Size ÷ 杠杆`；CFD 模式：`保证金 = 手数 × Contract Size × 开仓价 × 保证金比例`。 |\n\n---\n\n### 六、库存费（Swap）\n\n| 字段 | 英文名 | 说明 |\n|------|--------|------|\n| **多仓库存费** | Swap Long | 持有多仓过夜收取/支付的费用。正数为收入，负数为支出。 |\n| **空仓库存费** | Swap Short | 持有空仓过夜收取/支付的费用。 |\n| **库存费模式** | Swap Mode | 计算方式：以点计（Points）、以货币计（Currency）、以百分比年化计（Interest %）等。 |\n| **三倍 Swap 日** | Triple Swap Day | 某日的库存费会乘以 3，用于补偿周末两天。外汇通常为周三；黄金、部分指数为周五。 |\n\n---\n\n### 七、止损与冻结距离\n\n| 字段 | 英文名 | 说明 |\n|------|--------|------|\n| **止损距离** | Stops Level | 止损（SL）和止盈（TP）必须距当前市价的最小距离（单位：Points）。若设置过近会被拒绝。Stops Level = 0 表示无限制。 |\n| **冻结距离** | Freeze Level | 当市价进入此距离范围内时，挂单的修改/删除操作会被冻结，防止在临近触发时干预。单位：Points。大多数现货 FX 品种为 0。 |\n\n---\n\n### 八、执行模式\n\n| 模式 | 说明 |\n|------|------|\n| **Market Execution** | 以当前最优市价成交，无重新报价；STP/ECN 账户常见，会有滑点。 |\n| **Instant Execution** | 以请求价成交；若市价偏离超过允许范围，经纪商可重新报价（Requote）；旧式 MM 账户常见。 |\n| **Exchange Execution** | 以交易所撮合价成交，用于股票/期货等。 |\n| **Request Execution** | 先请求报价，确认后成交。 |\n\n---\n\n## 与 UM 合约规格表的对应\n\nUM 合约规格表各列对应关系：\n\n| UM 规格表列名 | 对应 MT4/MT5 字段 |\n|-------------|-----------------|\n| 小数点位 | Digits |\n| 每手合约大小 | Contract Size |\n| 浮动点差（仅供参考） | Spread（Points） |\n| 最小手数 | Min Volume |\n| 最大手数 | Max Volume |\n| 手数步长 | Volume Step |\n| 买入库存费 | Swap Long |\n| 卖出库存费 | Swap Short |\n| 三倍库存费日 | Triple Swap Day |\n"}, {"id": "CFD进阶-STP与ECN执行模式", "group": "CFD 进阶", "title": "STP与ECN执行模式", "content": "# CFD 进阶：STP 与 ECN 执行模式\n\n> 🎯 **新人导读**：这是理解 IB 返佣结构的核心背景——为什么 STP 账户用 pips 计算返点、ECN 账户用 USD 计算佣金，答案在这里。\n\n## 为什么理解 STP vs ECN 很重要\n\nUM 的两种主账户类型（Standard STP 和 Raw ECN）在盈利来源、点差、手续费、IB 返佣计算方式上均不同。理解执行模式的行业背景，有助于解释为何 IB 返佣规则中 STP 按「pips」计算而 ECN 按「USD/手」计算。\n\n---\n\n## STP（Straight Through Processing，直通处理）\n\n### 定义\n\nSTP 是指客户的交易指令**直接路由至流动性提供商**（银行、做市商等），不经过任何中间人干预。经纪商不充当交易对手方，也不持有反向仓位。\n\n### 盈利模式\n\nSTP 经纪商通过**在原始点差上加宽（Markup）**来盈利：\n\n```\n客户看到的点差 = 原始流动性点差 + Markup（加点）\n```\n\n- 点差宽窄随市场流动性变动（变动点差）\n- 经纪商的收入 = Markup 部分，与客户盈亏无关\n- IB 返佣从 Markup 中分出一部分给 IB → 这就是为什么 STP 返佣用「pips」衡量\n\n### UM Standard STP 账户特点\n\n| 特征 | 说明 |\n|------|------|\n| 点差 | 含 Markup 的变动点差（通常 1.0–2.5 pips 起） |\n| 额外手续费 | 无 |\n| 加点上限 | 最高 2 pips（超过须 Lark 人工申请） |\n| IB 返佣单位 | pips/手（FX/Oil/Gold/Silver）或 %（其他品种） |\n\n---\n\n## ECN（Electronic Communications Network，电子通讯网络）\n\n### 定义\n\nECN 将所有参与者（银行、做市商、机构、散户）的订单汇聚到同一个电子化交易池，买卖双方**直接撮合**。经纪商从每笔成交中收取**固定手续费（Commission）**，不从点差中赚差价。\n\n### 盈利模式\n\n```\n客户交易成本 = 原始点差（接近 0）+ 固定手续费\n```\n\n- 点差极低（外汇通常 0.0–0.5 pips 原始点差）\n- 经纪商收入 = 每手固定佣金，与点差无关\n- IB 返佣从手续费中分出 → 这就是为什么 ECN 返佣用「USD/手」衡量\n\n### UM Raw ECN 账户特点\n\n| 特征 | 说明 |\n|------|------|\n| 点差 | 接近原始市场点差（0.0 pips 起） |\n| 手续费 | 固定（USD 账户 5 USD/手单边，即 10 USD 双边） |\n| 加佣上限 | 最高 20 USD（加佣越高，IB 手数佣金越低） |\n| MT4 执行 | 开仓时附加订单，平仓时才从余额扣除 |\n| MT5 执行 | 开仓扣 50%，平仓扣剩余 50% |\n| IB 返佣单位 | USD/手（FX/Oil/Gold/Silver）或 %（其他品种） |\n\n---\n\n## STP vs ECN 对比\n\n| 维度 | Standard STP | Raw ECN |\n|------|-------------|---------|\n| 点差 | 较宽（含 Markup） | 极窄（接近原始） |\n| 手续费 | 无 | 有（固定 USD/手） |\n| 总交易成本 | 仅点差 | 点差 + 手续费 |\n| 适合交易风格 | 低频、中长线 | 高频、短线、剥头皮 |\n| IB 返佣计算 | pips/手 | USD/手 |\n| 经纪商收入来源 | 点差 Markup | 固定手续费 |\n\n---\n\n## 为什么 STP 和 ECN 返佣必须同级别申请\n\nIB 返佣按「累计入金」分 5 档（1–49,999 / 50,000–99,999 / 100,000–199,999 / 200,000–499,999 / 500,000+），每档对应一组 STP pips 和 ECN USD 数值。\n\n由于两种账户类型最终代表相同的「IB 成本」等级，**同一个 IB 下的 STP 和 ECN 必须选择对应同一档位**，否则利润分配逻辑错乱。\n"}, {"id": "CFD进阶-浮动杠杆机制", "group": "CFD 进阶", "title": "浮动杠杆机制", "content": "# CFD 进阶：浮动杠杆（Dynamic / Floating Leverage）机制\n\n> 🎯 **新人导读**：UM 在重大新闻前后会临时降低杠杆（如统一调整为 200:1），这里解释为什么要这么做，以及对客户保证金的实际影响。\n\n## 三种杠杆类型\n\n| 类型 | 定义 | UM 说明 |\n|------|------|---------|\n| **固定杠杆（Fixed Leverage）** | 无论仓位大小，杠杆倍数不变 | 适用部分产品/账户 |\n| **浮动杠杆（Floating Leverage）** | 杠杆随持仓量自动分级降低 | UM 外汇账户默认使用 |\n| **动态杠杆（Dynamic Leverage）** | 与浮动杠杆含义相近，部分经纪商用此术语 | UM 客户手册将浮动 = 动态 |\n\n---\n\n## 浮动杠杆的运作逻辑\n\n**核心原则**：仓位越大，实际杠杆越低，所需保证金比例越高。\n\n这是行业监管要求与风险控制的结合——大仓位意味着更大的市场风险敞口，因此系统强制降低杠杆保护双方。\n\n### 典型分级示例（以外汇为例）\n\n| 净持仓量（手） | 适用杠杆 | 对应保证金率 |\n|---------------|---------|------------|\n| 0 – 50 | 1:500 | 0.2% |\n| 51 – 200 | 1:200 | 0.5% |\n| 201 – 500 | 1:100 | 1.0% |\n| 500+ | 1:50 | 2.0% |\n\n> **注**：UM 的具体分级参数见官网合约规格（Contract Specification），不同产品分级不同。\n\n### 保证金计算（浮动杠杆）\n\n当持仓跨越多个分级时，**每一段按对应杠杆单独计算**，然后求和：\n\n```\n示例：账户持有 EUR/USD 共 300 手（账户标称杠杆 500）\n\n前 50 手：  50 × 100,000 × (1/500) = $10,000\n51–200 手：150 × 100,000 × (1/200) = $75,000\n201–300 手：100 × 100,000 × (1/100) = $100,000\n\n总所需保证金 = $185,000（等效实际杠杆约 1:162）\n```\n\n---\n\n## 固定杠杆下的保证金计算\n\n固定杠杆较简单，整体持仓统一按同一杠杆计算：\n\n```\n所需保证金 = 头寸名义价值 / 杠杆\n            = 手数 × 合约大小 × 当前价格 / 杠杆\n```\n\n---\n\n## 临时杠杆调整（News / Weekend）\n\nUM 在特定时段对外汇、黄金、白银、原油、指数强制调整杠杆至 **200:1**（2025-06-02 起）：\n\n| 触发时段 | 调整 |\n|----------|------|\n| 重大新闻前 15 分钟 ～ 发布后 5 分钟 | 强制 200:1 |\n| 周五收盘前 1 小时 ～ 周一开市后 30 分钟 | 强制 200:1 |\n\n**规则**：\n- 若账户原有杠杆 < 200:1，维持不变（不会被调高）\n- 调整时段内开立的仓位以 200:1 计算保证金\n- 时段结束后，仓位恢复按账户原杠杆计算\n\n**背景**：此为行业常见做法，在极端波动前降低客户和经纪商的风险敞口。\n\n---\n\n## 与强平规则的关系\n\n浮动杠杆直接影响 Margin Level（预付款比例）：\n\n```\nMargin Level = 净值（Equity） / 占用保证金 × 100%\n```\n\n- 大仓位 → 浮动杠杆降低 → 占用保证金增大 → Margin Level 下降更快\n- UM 强平线：Margin Level ≤ **20%**\n\n因此，在高杠杆建立大仓位后，账户对价格的波动更敏感，更容易触发强平。\n"}, {"id": "CFD进阶-对冲与净持仓", "group": "CFD 进阶", "title": "对冲与净持仓", "content": "# CFD 进阶：对冲（Hedging）与净持仓\n\n> 🎯 **新人导读**：赠金扣除逻辑中有「对冲关盈利单套利」的特殊处理，MT4 和 MT5 的对冲方式不同也是客户常见疑问来源。\n\n## 什么是对冲\n\n**对冲（Hedging）**：在同一账户上同时持有某一品种的多头（买入）和空头（卖出）仓位，使两个方向的盈亏相互抵消，以降低价格波动风险。\n\n### CFD 对冲示例\n\n```\n账户持仓：\n  买入（Long）  EUR/USD  1 手  → 价格上涨盈利\n  卖出（Short） EUR/USD  1 手  → 价格下跌盈利\n\n净效果：价格无论涨跌，理论上盈亏为 0（完全对冲）\n```\n\n---\n\n## MT4 vs MT5 的对冲差异\n\n| 平台 | 对冲支持 | 净持仓显示 | 保证金要求 |\n|------|---------|-----------|-----------|\n| **MT4** | ✅ 支持同向多单、双向对冲 | 显示每笔独立订单 | 多头和空头各占独立保证金 |\n| **MT5** | ✅ 支持（默认净持仓模式） | 净持仓（多空相消后显示） | 通常按净仓量计算（较低） |\n\n> UM 同时提供 MT4 和 MT5，客户可在两个平台上进行对冲操作。\n\n---\n\n## 对冲与保证金\n\n### MT4（独立仓位模式）\n```\n买入 1 手 EUR/USD → 占用保证金 A\n卖出 1 手 EUR/USD → 占用保证金 B（单独计算）\n总占用保证金 = A + B\n```\n\n### MT5（净持仓模式）\n```\n买入 1 手 + 卖出 1 手 → 净仓位 = 0 手\n净持仓为 0 → 占用保证金极低或为 0\n```\n\n这就是为什么有客户利用 MT5 对冲来维持极低保证金占用的原因。\n\n---\n\n## 对冲与赠金扣除逻辑（为什么这里重要）\n\nUM 的赠金扣除规则专门针对「对冲中关盈利单出金」的情形：\n\n**场景**：\n1. 客户入金 200 USD，获得 200 USD 赠金（总余额 400）\n2. 开多头 1 手 + 空头 1 手（完全对冲），净风险为 0\n3. 其中一个方向盈利 200 USD，客户**仅平仓盈利单**，申请出金 200 USD\n4. 账户仍保留亏损单（持仓中）\n\n**问题**：\n- 旧逻辑：赠金只扣 20%，客户实际提走 200 USD 盈利后，亏损单由赠金承担 → 赠金被「套利」\n- 新逻辑：系统将亏损持仓计入赠金扣除计算 → 赠金全部扣完\n\n```\n新逻辑公式：\n扣除赠金 = 亏损金额 / (净值 - 出金额) × 赠金总额\n\n= 200 / (400 - 200) × 200 = 200（全部扣完）\n```\n\n---\n\n## 对冲与黑名单 SOP\n\nUM 的黑名单排查 SOP 中，**异常对冲行为**是触发风控审查的标志之一：\n\n- 同一账户大量对冲订单且频繁只出盈利方向\n- 跨账户对冲（两个账户一多一空，套取赠金或返佣）\n- 利用对冲绕过出金限制\n\n---\n\n## 净持仓（Net Position）\n\n**净持仓**：同一品种多头与空头相互抵消后的实际暴露量。\n\n```\n净持仓 = 多头手数 - 空头手数\n\n示例：\n买入 3 手 EUR/USD + 卖出 1 手 EUR/USD\n净持仓 = 3 - 1 = 2 手（净多头 2 手）\n```\n\n净持仓的意义：\n- 决定实际市场风险敞口\n- 影响浮动杠杆分级（见[[CFD进阶-浮动杠杆机制]]）\n- MT5 保证金计算基于净持仓\n\n---\n\n## 与跟单（Copy Trade）的关系\n\nUM Social / 专业跟单中，Follower 账户的对冲行为会影响 Provider 的绩效费计算：\n- 绩效费基于 Follower **通过订阅开立的仓位**盈亏，不含自行手动仓位\n- 但若 Follower 手动开对冲单，可能影响账户保证金，进而影响跟单能力\n"}, {"id": "CFD进阶-企业行动对CFD的影响", "group": "CFD 进阶", "title": "企业行动对CFD的影响", "content": "# CFD 进阶：企业行动（Corporate Actions）对 CFD 持仓的影响\n\n> 🎯 **新人导读**：股票/指数 CFD 遇到除权除息时账户会出现神秘调整，这里解释 UM 派息公式，对应 wiki 的「产品-企业行动记录」。\n\n## 什么是企业行动\n\n**企业行动（Corporate Actions）**：上市公司影响其股票价格或股份结构的重大决定，包括：\n\n| 类型 | 说明 |\n|------|------|\n| **股息（Dividend）** | 公司向股东派发利润 |\n| **股票拆分（Stock Split）** | 一股变多股（如 2:1 拆分，价格减半，数量翻倍） |\n| **合股（Reverse Split）** | 多股合一股 |\n| **分拆（Spinoff）** | 母公司剥离子公司成独立上市公司 |\n| **供股（Rights Issue）** | 向现有股东按比例发行新股 |\n\n---\n\n## CFD 持仓在企业行动中的处理方式\n\nCFD 持有者不是实际股东，**不直接参与企业行动**，但经纪商会在账户中做相应调整以反映经济等效效果。\n\n---\n\n## 股息（Dividend）调整\n\n### 原理\n\n股票除息日（Ex-Dividend Date）当天，股价会自动下跌（约等于每股股息），以反映公司已将利润派出。\n\nCFD 持有者不持有实际股票，无法收到真实股息，但经纪商通过**现金调整**来模拟效果：\n\n| 持仓方向 | 处理 |\n|---------|------|\n| **多头（Long）** | 账户**收到**股息等额现金（正调整） |\n| **空头（Short）** | 账户**扣除**股息等额现金（负调整） |\n\n### UM 的计算公式\n\n```\n派息金额 = Dividend × Volume（手数）× Contract Size × EoD 价格（汇率换算）\n```\n\n**示例（SP500）**：\n- Dividend = 0.587\n- Volume = 0.2 手\n- Contract Size = 1\n- USD 账户：EoD = 1\n\n```\n派息 = 0.587 × 0.2 × 1 × 1 = 0.1174 USD\n```\n\n**示例（HK50，HKD 结算）**：\n```\n派息 = 派息金额(HKD) × HKD/USD 汇率（≈0.13）\n```\n\n### 重要说明\n\n- 股息调整在**除息日前一个交易日收盘后**执行\n- Swap Free（NM）账户的指数、大宗商品、加密货币不收取 Swap，但会以**Administration Fee** 形式收取，股息调整逻辑不变\n- 派息公告参考：[UM 官网公告](https://www.ultimamarkets.com/cn/announcement/)\n\n---\n\n## 股票拆分（Stock Split）调整\n\n### 处理方式\n\n当一只股票以 N:1 比例拆分时，CFD 仓位会自动调整：\n\n```\n新手数 = 旧手数 × N\n新价格 = 旧价格 / N\n总价值不变\n```\n\n**示例（2:1 拆分）**：\n- 原持仓：0.1 手 @ $300 = $30 价值\n- 调整后：0.2 手 @ $150 = $30 价值（不变）\n\nUM 将此类事件记录在[[产品-企业行动记录]]中，并在事件前公告处理方式。\n\n---\n\n## 分拆（Spinoff）\n\n### 处理方式\n\n母公司将子公司独立上市时，CFD 处理比股票更复杂。通常做法：\n\n1. 母公司 CFD 仓位调整（价格扣除子公司价值）\n2. 子公司 CFD 可能**暂时设为「仅限平仓」（Close Only）**，待市场稳定后恢复\n3. 部分经纪商直接以现金形式补偿子公司价值\n\n### UM 的实践\n\nUM wiki（[[产品-企业行动记录]]）记录：\n> 企业行动类型：分拆（Spinoff）\n\n通常处理为「仅限平仓」状态，即现有仓位可平仓但不可新开。\n\n---\n\n## 对交易者的影响\n\n| 企业行动 | 多头持仓影响 | 空头持仓影响 | 注意事项 |\n|---------|-----------|-----------|---------|\n| 股息 | ✅ 收到现金 | ❌ 扣除现金 | 空头持股息重的股票有额外成本 |\n| 拆分 | 数量增加，价格减半 | 同步调整 | 总价值不变，无需操作 |\n| 合股 | 数量减少，价格增加 | 同步调整 | 总价值不变，无需操作 |\n| 分拆 | 可能现金补偿 | 同步 | 关注「仅限平仓」通知 |\n"}, {"id": "CFD进阶-绩效费与高水位线", "group": "CFD 进阶", "title": "绩效费与高水位线", "content": "# CFD 进阶：绩效费（Performance Fee）与高水位线（High Watermark）\n\n> 🎯 **新人导读**：Provider 和 PAMM Master 经常问「为什么我有盈利但没收到绩效费」——高水位线机制就是答案。\n\n## 什么是绩效费\n\n**绩效费（Performance Fee）**：基金/账户管理人按照**盈利**的一定比例收取的报酬，用于激励主动管理人为投资者创造超额收益。\n\n在 UM 中，绩效费出现在两个场景：\n1. **PAMM Master**：按 PAMM 账户周期盈利的百分比收取\n2. **UM Social Provider**：按 Follower 账户周期盈利的百分比收取\n\n---\n\n## 高水位线（High Watermark）机制\n\n### 定义\n\n**高水位线**是指账户曾经达到过的**最高净值**。绩效费只能在账户净值**超过上一个高水位线**时才可收取。\n\n### 为什么需要高水位线\n\n若没有高水位线：\n- 第 1 周期：净值 100 → 120，涨 20%，收取绩效费 ✅\n- 第 2 周期：净值 120 → 90，亏损 30，不收绩效费\n- 第 3 周期：净值 90 → 105，涨 15，但**此时净值仍低于 120**\n\n若无高水位线保护，第 3 周期就可以再次收费，意味着投资者：\n- 亏了钱（120→90）\n- 还在账户未回本的情况下再次付费\n\n**高水位线解决此问题**：只有净值超过 120（历史最高）才能收取新一轮绩效费。\n\n### UM 的实现方式\n\n> UM wiki 原文：「若某周期有亏损，亏损额结转至下周期，直到 PAMM Master 弥补亏损后方可收取绩效费」\n\n这正是高水位线机制的表述方式，只是用「亏损结转」来描述而非「高水位线」这一术语。\n\n---\n\n## 绩效费计算周期\n\n| 产品 | 计算周期 | 说明 |\n|------|---------|------|\n| PAMM | 定期（通常按月/季度） | 周期内净盈利 × 费率 |\n| UM Social | 每个交易周期 | 订阅期内净盈利 × 绩效费率 |\n| 专业跟单（Copy Trade Pro） | 类似 PAMM | 按周期结算 |\n\n---\n\n## 绩效费 vs 管理费\n\n| 费用 | 计算基础 | 何时收取 | 是否受高水位保护 |\n|------|---------|---------|----------------|\n| **绩效费** | 周期盈利 × % | 盈利时 | ✅ 是（亏损需补齐） |\n| **管理费** | 净值 × % 或固定金额 | 无论盈亏，按期收取 | ❌ 否 |\n\n- PAMM Master 可同时设置绩效费和管理费\n- 管理费不受高水位保护，持续扣除\n- 长期亏损账户：管理费持续扣，绩效费无法收取 → 对投资者不利，需谨慎选择 PAMM Master\n\n---\n\n## 不计入绩效费的项目\n\nUM wiki 明确指出，以下项目**不计入**绩效费计算：\n- 手续费（Commission）和隔夜利息（Swap）：直接计入仓位内，实际上已影响盈亏\n- 股利分红（Dividend）调整\n- 展期扣补（Rollover）\n\n**例外**：\n- Commission 和 Swap 虽「直接计入仓位内的费用会列入」——即通过影响持仓盈亏间接影响绩效费\n- Dividend 和 Rollover **额外产生的扣补记录**不列入\n\n---\n\n## 为什么 Provider 可能收不到绩效费\n\n常见原因（UM wiki 来源）：\n1. **该周期账户亏损** → 亏损结转，等下期弥补\n2. **Follower 净值未超过高水位线** → 历史高点未突破\n3. **Follower 账户余额不足** → 无法完成结算\n4. 绩效费设置错误（系统配置问题）\n\n---\n\n## PAMM 绩效费含浮动盈亏\n\nUM PAMM 的绩效费计算**同时包含**：\n- 已实现盈亏（已平仓订单）\n- 浮动盈亏（未平仓订单的未实现盈亏）\n\n这意味着：即使仓位未平，只要浮盈足够，周期结束时也会结算绩效费。\n"}, {"id": "CFD进阶-监管框架与账户限制", "group": "CFD 进阶", "title": "监管框架与账户限制", "content": "# CFD 进阶：监管框架与账户限制背景\n\n> 🎯 **新人导读**：禁开国名单、Swap Free 申请资格、CPA 三套名单——这些规则的监管背景在这里，帮助理解「为什么这个国家不行」的根本原因。\n\n## 为什么 CFD 经纪商有禁开国\n\nCFD 交易在全球受到不同程度的监管，部分国家**明确禁止**或**严格限制** CFD 向零售客户销售：\n\n| 国家/地区 | 监管机构 | 对 CFD 的态度 |\n|----------|---------|-------------|\n| 美国 | CFTC / SEC | 禁止向零售客户提供场外 CFD |\n| 澳大利亚 | ASIC | 2021 年起对 CFD 杠杆实施严格上限 |\n| 英国 | FCA | 允许但有严格杠杆限制（外汇最高 30:1） |\n| 新加坡 | MAS | 允许但仅面向合格投资者 |\n| 香港 | SFC | 允许，有监管要求 |\n\n\n---\n\n### 杠杆上限（2018 年起）\n\n| 产品类别 | 零售客户最高杠杆 |\n|---------|--------------|\n| 主要货币对 | 30:1 |\n| 非主要货币对 / 黄金 | 20:1 |\n| 大宗商品（非黄金）/ 主要股指 | 10:1 |\n| 个股 CFD | 5:1 |\n| 加密货币 | 2:1 |\n\nUM 面向东南亚/MENA/国际市场，使用 **Vanuatu（瓦努阿图）牌照**，不受 ESMA 限制，可提供 500:1 杠杆。\n\n### ESMA 禁止的做法\n\n- 赠金（Credit Bonus）\n- 「保证不亏损」承诺\n- 强制 Negative Balance Protection（亏损不超过本金）\n\nUM 虽在 ESMA 管辖范围外，但自愿提供**穿仓清零**保护（Negative Balance Reset）。\n\n---\n\n## FCA（英国金融行为监管局）与 UM\n\nUM wiki 中有专页介绍「FCA 英国介绍」：\n\n- 英国受 FCA 监管，对 CFD 有额外限制\n- **2025 年 9 月 15 日起**，UM 不再接受英国新客户注册（现有客户不受影响）\n- 原因：FCA 监管合规成本，以及零售 CFD 杠杆上限（外汇 30:1）与 UM 产品定位的差异\n\n---\n\n## Swap Free（伊斯兰账户）与监管背景\n\n**伊斯兰金融法则（Sharia）**禁止：\n- 利息收取（Riba）\n- 不确定性过高的合同（Gharar）\n\nCFD 的隔夜利息（Swap）被视为利息，因此 MENA 地区穆斯林投资者需要特殊的**伊斯兰账户**：\n\n| 普通账户 | Swap Free 账户 |\n|---------|--------------|\n| 持仓过夜收取 Swap（正或负） | 不收取 Swap |\n| 无额外费用 | 对指数/大宗商品收取 Administration Fee |\n\nUM 的 **Swap Free（NM）国家**名单（14 国，主要是 MENA 国家）与此直接相关：\nEgypt、Saudi Arabia、Oman、Qatar、Indonesia、Morocco、Kuwait、Bahrain、India、Iraq、Jordan、Palestinian、Malaysia、Thailand\n\n> **注**：非 MENA 国家客户需要提供伊斯兰宗教证明（Religion Certificate）才能申请 Swap Free 账户，且需要 HOD 特别审批。\n\n---\n\n## CPA 禁开国 vs UM 禁开国的区别\n\n| 名单类型 | 逻辑 |\n|---------|------|\n| **UM 禁开国（31 国）** | 完全无法在 UM 开设任何账户 |\n| **CPA 禁开国（74 国）** | 无法开设 CPA（联盟营销）账户，但普通交易账户仍可开 |\n| **CPA 佣金禁止国（53 国）** | 可开交易账户，但 CPA 带来的客户不触发佣金（通常因监管或合规风险） |\n\nCPA 的额外限制来自各国对**性能营销（Performance Marketing）**和**金融产品推广**的不同规定，部分国家即使允许客户开户，也禁止向营销合作方支付获客佣金。\n\n---\n\n## 负余额保护（Negative Balance Protection）\n\n**行业定义**：当账户亏损超过本金（净值变负）时，经纪商吸收超额亏损，客户最多亏光本金。\n\n| 监管区域 | 是否强制要求 |\n|---------|-----------|\n| 欧盟（ESMA 零售客户） | ✅ 强制 |\n| 英国（FCA 零售客户） | ✅ 强制 |\n| UM（非 ESMA/FCA 管辖） | 自愿提供（穿仓清零 Negative Balance Reset） |\n\nUM 的「穿仓清零」机制：\n- 系统每 **3 分钟**自动将负余额重置为 0\n- 例外：账户在黑名单中、MAM/PAMM 账户、账户有持仓\n- 可手动申请：客户发邮件至 info@ultimamarkets.com 或销售提交工单 D03-1\n"}, {"id": "CFD进阶-IB与代理佣金体系行业背景", "group": "CFD 进阶", "title": "IB与代理佣金体系行业背景", "content": "# CFD 进阶：IB（介绍经纪人）与代理佣金体系行业背景\n\n> 🎯 **新人导读**：IB 和 CPA 的本质区别、多层返佣结构、归属的行业含义——这是理解 UM 代理体系的行业背景，让 Ch5/Ch6 的内部规则更容易消化。\n\n## IB（Introducing Broker）在行业中的定义\n\n**介绍经纪人（IB）**：不直接执行客户交易，而是将客户**介绍给主经纪商（Carrying Broker）**的中间方。IB 从客户产生的交易量中获得**返佣（Rebate）**，不承担交易风险。\n\n### IB 与 CPA 的本质区别\n\n| 维度 | IB（介绍经纪人） | CPA（Cost Per Action）|\n|------|---------------|----------------------|\n| 盈利模式 | 按客户**交易量**持续返佣 | 按客户**动作**（首入金）一次性佣金 |\n| 佣金时效 | 长期持续（客户一直交易则一直返佣） | 一次性（客户首次满足条件后结束） |\n| 适合角色 | 专业代理商、交易社区运营者 | 营销渠道、流量平台 |\n| 收入可预测性 | 高（与交易量正相关） | 低（取决于新获客数量） |\n| UM 要求 | 需 POI 验证、设置返佣 | 通过 Cellxpert 系统管理 |\n\n---\n\n## IB 返佣的行业计算逻辑\n\nCFD 行业的 IB 返佣有两种主流方式，与 UM 的 STP/ECN 分类完全对应：\n\n### 1. 点差分润（Spread Share）→ 对应 STP\n\n经纪商将加价点差的一部分（pips）分给 IB：\n\n```\nIB 收入（每手）= 客户交易手数 × IB 返点（pips/手）× 点值\n\n例：IB 返点 0.7 pips，客户交易 EUR/USD 1 手\n点值 = $10 / pip（标准手）\nIB 收入 = 1 × 0.7 × $10 = $7\n```\n\n### 2. 手续费分润（Commission Share）→ 对应 ECN\n\n经纪商将固定手续费的一部分（USD/手）分给 IB：\n\n```\nIB 收入（每手）= 客户交易手数 × IB 返佣（USD/手）\n\n例：IB 返佣 1.5 USD/手，客户交易 10 手\nIB 收入 = 10 × $1.5 = $15\n```\n\n### 两种方式不可混用的原因\n\n若 STP 和 ECN 返佣档位不同级（如 STP 属于中档而 ECN 属于高档），等效于 IB 在两种模式下获得不同比例的「经纪商让利」，破坏公平性并增加运营复杂度。UM 要求同级申请正是为此。\n\n---\n\n## 多层 IB 结构（Multi-Tier IB）\n\n行业惯例允许 IB 在自己下方再发展下级 IB（Sub-IB），形成多层金字塔结构。每一层都从最终客户的交易量中获得对应比例的返佣。\n\n### UM 的层级规则\n\n- 多层 IB 各层设置**相互独立**\n- 任何层级的调整都需要提供该层的返佣表\n- 代理直客的交易组别跟随直属代理\n- **代理层数上限**：由主管控制，有上限限制\n\n### 返佣金字塔示例\n\n```\n客户交易 1 手 EUR/USD（STP）\n\n一级 IB（上级）：返点 0.4 pips → $4\n二级 IB（中间）：返点 0.2 pips → $2  \n三级 IB（直属 IB）：返点 0.1 pips → $1\n\n总让利 = 0.7 pips（含在账户 Markup 中）\n```\n\n---\n\n## TOC（Term & Conditions）规则背景\n\n**TOC 规则**：行业中部分经纪商设置「返佣触发条件」，防止空账户刷佣金或不真实交易。\n\nUM 的 TOC 规则（参见[[IB-返佣计算方式]]）：客户需满足一定真实交易条件才触发 IB 返佣。这是行业反欺诈的常见做法：\n\n常见欺诈场景：\n- 客户与 IB 是同一人，开账户只为赚返佣\n- 客户只做「假交易」（高频开平对冲）刷量\n- 利用奖金账户和返佣套利\n\n---\n\n## 加点加佣（Markup）的行业逻辑\n\nIB 要求更高返佣时，经纪商通过**增加点差 Markup 或手续费**来覆盖成本：\n\n```\n经济逻辑：\n经纪商总让利空间 = 固定的（受流动性成本限制）\n\n若 IB 要求高返佣（高档位）：\n→ 经纪商需要从客户端多收（加点/加佣）来补偿\n→ 客户交易成本上升\n→ IB 从每手赚更多，但经纪商收入与无加点时相同\n\n结果：高档位返佣 = 客户支付更高成本 → IB 获益更多\n这就是「加点加佣越高，销售手数佣金越低」的根本原因。\n```\n\n---\n\n## IB 与归属（Ownership）的行业含义\n\n「客户归属」在 CFD 行业中是核心利益关系：\n\n- 客户注册时绑定推广链接 → 确定第一归属\n- 归属决定哪个 IB 从客户交易中获得返佣\n- 恶意抢客（未经同意转归属）属于不正当竞争\n\nUM 的归属转移规则（需证明、48小时确认、原销售批准）正是行业规范化的体现。\n"}];
+
+function mdToHtml(md) {
+  const lines = md.split('\n');
+  let html = '';
+  let inCode = false, codeLang = '', codeLines = [];
+  let inTable = false, tableLines = [];
+
+  function flushTable() {
+    if (!tableLines.length) return '';
+    let out = '<table><thead><tr>';
+    const headers = tableLines[0].split('|').filter((_,i,a) => i>0 && i<a.length-1).map(s=>s.trim());
+    headers.forEach(h => { out += '<th>' + inlinemd(h) + '</th>'; });
+    out += '</tr></thead><tbody>';
+    for (let r = 2; r < tableLines.length; r++) {
+      const cells = tableLines[r].split('|').filter((_,i,a) => i>0 && i<a.length-1).map(s=>s.trim());
+      out += '<tr>';
+      cells.forEach(c => { out += '<td>' + inlinemd(c) + '</td>'; });
+      out += '</tr>';
+    }
+    out += '</tbody></table>';
+    tableLines = [];
+    inTable = false;
+    return out;
+  }
+
+  function inlinemd(t) {
+    t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+    t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    t = t.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    return t;
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Code block
+    if (line.startsWith('```')) {
+      if (!inCode) {
+        if (inTable) { html += flushTable(); }
+        inCode = true; codeLang = line.slice(3).trim(); codeLines = [];
+      } else {
+        html += '<pre><code>' + codeLines.map(l => l.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')).join('\n') + '</code></pre>';
+        inCode = false; codeLines = [];
+      }
+      continue;
+    }
+    if (inCode) { codeLines.push(line); continue; }
+
+    // Table detection
+    if (line.startsWith('|')) {
+      if (!inTable) inTable = true;
+      tableLines.push(line);
+      continue;
+    } else if (inTable) {
+      html += flushTable();
+    }
+
+    // HR
+    if (/^---+$/.test(line.trim())) { html += '<hr>'; continue; }
+
+    // Headings
+    const hm = line.match(/^(#{1,4}) (.+)/);
+    if (hm) { const lvl = hm[1].length; html += '<h' + lvl + '>' + inlinemd(hm[2]) + '</h' + lvl + '>'; continue; }
+
+    // Blockquote
+    if (line.startsWith('> ')) { html += '<blockquote><p>' + inlinemd(line.slice(2)) + '</p></blockquote>'; continue; }
+
+    // List
+    const ulm = line.match(/^(\s*)[-*] (.+)/);
+    if (ulm) { html += '<ul><li>' + inlinemd(ulm[2]) + '</li></ul>'; continue; }
+    const olm = line.match(/^(\s*)\d+\. (.+)/);
+    if (olm) { html += '<ol><li>' + inlinemd(olm[2]) + '</li></ol>'; continue; }
+
+    // Blank line
+    if (line.trim() === '') { continue; }
+
+    // Paragraph
+    html += '<p>' + inlinemd(line) + '</p>';
+  }
+  if (inTable) html += flushTable();
+
+  // Merge consecutive ul/ol
+  html = html.replace(/<\/ul>\s*<ul>/g, '').replace(/<\/ol>\s*<ol>/g, '');
+  return html;
+}
+
+const EXTRA_KEY = 'onboarding_extra_v1';
+function loadExtraProgress() { try { return JSON.parse(localStorage.getItem(EXTRA_KEY) || '{}'); } catch { return {}; } }
+function saveExtraProgress(s) { localStorage.setItem(EXTRA_KEY, JSON.stringify(s)); }
+
+const ICON_CHECK_SMALL = `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="6" fill="rgba(5,150,105,0.15)" stroke="currentColor"/><polyline points="4,7.5 6,9.5 10,5.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function initExtra() {
+  const nav = document.getElementById('extra-nav');
+  const body = document.getElementById('extra-body');
+  if (!nav || !body) return;
+
+  const state = loadExtraProgress();
+  let curGroup = '';
+  EXTRA_DOCS.forEach((doc, idx) => {
+    if (doc.group !== curGroup) {
+      curGroup = doc.group;
+      const gEl = document.createElement('div');
+      gEl.className = 'extra-nav-group';
+      const gTitle = document.createElement('div');
+      gTitle.className = 'extra-nav-group-title';
+      gTitle.textContent = curGroup;
+      gEl.appendChild(gTitle);
+      nav.appendChild(gEl);
+    }
+    const item = document.createElement('div');
+    item.className = 'extra-nav-item' + (state[doc.id] ? ' read' : '');
+    item.dataset.idx = idx;
+    const label = document.createElement('span');
+    label.className = 'extra-nav-label';
+    label.textContent = doc.title;
+    const check = document.createElement('span');
+    check.className = 'extra-check';
+    check.innerHTML = ICON_CHECK_SMALL;
+    item.appendChild(label);
+    item.appendChild(check);
+    item.addEventListener('click', () => showExtraDoc(idx));
+    nav.appendChild(item);
+  });
+
+  updateExtraProgress();
+  showExtraDoc(0);
+}
+
+function showExtraDoc(idx) {
+  const doc = EXTRA_DOCS[idx];
+  const body = document.getElementById('extra-body');
+  body.innerHTML = mdToHtml(doc.content);
+
+  // Mark-read button
+  const state = loadExtraProgress();
+  const isDone = !!state[doc.id];
+  const btn = document.createElement('button');
+  btn.className = 'extra-read-btn' + (isDone ? ' done' : '');
+  btn.innerHTML = (isDone
+    ? ICON_CHECK_SMALL + ' 已标记已读'
+    : `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="6"/></svg> 标记已读`);
+  btn.addEventListener('click', () => {
+    const s = loadExtraProgress();
+    const nowDone = !s[doc.id];
+    s[doc.id] = nowDone;
+    saveExtraProgress(s);
+    btn.className = 'extra-read-btn' + (nowDone ? ' done' : '');
+    btn.innerHTML = (nowDone
+      ? ICON_CHECK_SMALL + ' 已标记已读'
+      : `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="6"/></svg> 标记已读`);
+    const navItem = document.querySelector(`.extra-nav-item[data-idx="${idx}"]`);
+    if (navItem) navItem.classList.toggle('read', nowDone);
+    updateExtraProgress();
+    updateGlobalProgress();
+  });
+  body.appendChild(btn);
+
+  document.querySelectorAll('.extra-nav-item').forEach(el => {
+    el.classList.toggle('active', +el.dataset.idx === idx);
+  });
+  body.parentElement.scrollTop = 0;
+}
+
+function updateExtraProgress() {
+  const state = loadExtraProgress();
+  const total = EXTRA_DOCS.length;
+  const done = EXTRA_DOCS.filter(d => state[d.id]).length;
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  const full = total > 0 && done === total;
+  const badge = document.getElementById('extra-badge');
+  const bar = document.getElementById('extra-prog-bar');
+  if (badge) { badge.textContent = done + ' / ' + total + ' 已读'; badge.className = 'extra-progress-badge' + (full ? ' complete' : ''); }
+  if (bar) bar.style.width = pct + '%';
+
+  // Update overview card for extra (if it exists)
+  const ovExtra = document.getElementById('ov-progress-extra');
+  if (ovExtra) {
+    ovExtra.querySelector('.ov-progress-bar').style.width = pct + '%';
+    const label = ovExtra.querySelector('.ov-progress-label');
+    label.textContent = done + ' / ' + total + ' 已读';
+    label.className = 'ov-progress-label' + (full ? ' full' : '');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initExtra();
+  // Add progress bar to the extra overview card
+  const extraCard = [...document.querySelectorAll('.ov-card')].find(c => c.querySelector('h3')?.textContent === '补充知识');
+  if (extraCard) {
+    const wrap = document.createElement('div');
+    wrap.className = 'ov-progress';
+    wrap.id = 'ov-progress-extra';
+    wrap.innerHTML = `<div class="ov-progress-bar-wrap"><div class="ov-progress-bar" style="width:0%"></div></div><span class="ov-progress-label">0 / ${EXTRA_DOCS.length} 已读</span>`;
+    extraCard.querySelector('.ov-text').appendChild(wrap);
+    updateExtraProgress();
+  }
+});
+
 </script>
 </body>
 </html>
